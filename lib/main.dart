@@ -12,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => SelectedCell(),
+      lazy: false,
       child: MaterialApp(
         title: 'Sudoku',
         theme: ThemeData(
@@ -25,7 +26,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {}
+class SelectedCell extends ChangeNotifier {
+  int row = -1;
+  int col = -1;
+
+  void changeLocation({
+    required int row, required int col
+  }) async {
+    print(row.toString() +" :: "+ col.toString());
+    this.row = row;
+    this.col = col;
+    notifyListeners();
+  }
+
+
+
+}
 
 class MyHomePage extends StatefulWidget {
   @override

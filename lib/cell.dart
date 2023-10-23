@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:sudoku/main.dart';
 import 'package:sudoku/sudoku.dart';
 
-class ColoredCell extends StatefulWidget {
-  ColoredCell({
+class ColoredCell extends StatelessWidget {
+  const ColoredCell({
     super.key,
     required this.boxSize,
     required this.sudoku,
@@ -16,28 +18,26 @@ class ColoredCell extends StatefulWidget {
   final int row;
   final int col;
 
-  @override
-  State<ColoredCell> createState() => _ColoredCellState();
-}
-
-class _ColoredCellState extends State<ColoredCell> {
-  bool selected = false;
+  bool highlight(BuildContext context) {
+    return context.watch<SelectedCell>().row == row ||
+        context.watch<SelectedCell>().col == col;
+  }
   @override
   Widget build(BuildContext context) {
+    bool selected = highlight(context);
     return Focus(
       child: ColoredBox(
         color: selected ? Colors.red : Colors.green,
         child: SizedBox(
-          width: widget.boxSize.width,
-          height: widget.boxSize.height,
-          child: Cell(sudoku: widget.sudoku, row: widget.row, col: widget.col),
+          width: boxSize.width,
+          height: boxSize.height,
+          child: Cell(sudoku: sudoku, row: row, col: col),
         ),
       ),
       onFocusChange: (focused) {
-        setState(() {
-          selected = focused;
-          print(focused);
-        });
+        if (focused) {
+          context.read<SelectedCell>().changeLocation(row: row, col: col);
+        }
       },
     );
   }
@@ -141,5 +141,3 @@ class EditableCell extends StatelessWidget {
     );
   }
 }
-
-
