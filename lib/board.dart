@@ -8,7 +8,7 @@ class SudokuBoard extends StatefulWidget {
   State<SudokuBoard> createState() => _SudokuBoardState();
 }
 
-class _SudokuBoardState extends State<SudokuBoard> {
+class _SudokuBoardState extends State<SudokuBoard> with Box{
   late Sudoku sudoku;
   _SudokuBoardState() {
     sudoku = Sudoku.newGame(Difficulty.expert);
@@ -41,7 +41,7 @@ class _SudokuBoardState extends State<SudokuBoard> {
   List<Widget> generateRow(int cols, Size boxSize, int row) {
     return [
       for (int col = 0; col < cols; col++)
-        ColoredCell(boxSize: boxSize, sudoku: sudoku, row: row, col: col)
+        ColoredCell(boxSize: boxSize, box: box(row, col), sudoku: sudoku, row: row, col: col)
     ];
   }
 }

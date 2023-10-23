@@ -29,13 +29,15 @@ class MyApp extends StatelessWidget {
 class SelectedCell extends ChangeNotifier {
   int row = -1;
   int col = -1;
+  int box = -1;
 
   void changeLocation({
-    required int row, required int col
+    required int row, required int col, required int box
   }) async {
     print(row.toString() +" :: "+ col.toString());
     this.row = row;
     this.col = col;
+    this.box = box;
     notifyListeners();
   }
 

@@ -4,6 +4,32 @@ import 'package:provider/provider.dart';
 import 'package:sudoku/main.dart';
 import 'package:sudoku/sudoku.dart';
 
+mixin Box {
+  int index(int value) {
+    int result = -1;
+    if (value >= 0 && value <= 2) {
+      result = 0;
+    } else if (value >= 3 && value <= 5) {
+      result = 1;
+    } else if (value >= 6 && value <= 8) {
+      result = 2;
+    }
+
+    return result;
+  }
+
+  int box(int row, int col) {
+    int rowMultiplier = index(row);
+    int colAddition = index(col);
+
+    if (rowMultiplier < 0 || colAddition < 0) {
+      return -1;
+    }
+
+    return 3 * rowMultiplier + colAddition;
+  }
+}
+
 class ColoredCell extends StatelessWidget {
   const ColoredCell({
     super.key,
@@ -11,23 +37,25 @@ class ColoredCell extends StatelessWidget {
     required this.sudoku,
     required this.row,
     required this.col,
+    required this.box,
   });
 
   final Size boxSize;
   final Sudoku sudoku;
-  final int row;
-  final int col;
+  final int row, col, box;
 
-  bool highlight(BuildContext context) {
+  bool highlighBackground(BuildContext context) {
     return context.watch<SelectedCell>().row == row ||
-        context.watch<SelectedCell>().col == col;
+        context.watch<SelectedCell>().col == col ||
+        context.watch<SelectedCell>().box == box;
   }
+
   @override
   Widget build(BuildContext context) {
-    bool selected = highlight(context);
+    bool highlightBackground = highlighBackground(context);
     return Focus(
       child: ColoredBox(
-        color: selected ? Colors.red : Colors.green,
+        color: highlightBackground ? Colors.red : Colors.green,
         child: SizedBox(
           width: boxSize.width,
           height: boxSize.height,
@@ -36,7 +64,9 @@ class ColoredCell extends StatelessWidget {
       ),
       onFocusChange: (focused) {
         if (focused) {
-          context.read<SelectedCell>().changeLocation(row: row, col: col);
+          context
+              .read<SelectedCell>()
+              .changeLocation(row: row, col: col, box: box);
         }
       },
     );
@@ -108,6 +138,7 @@ class EditableCell extends StatelessWidget {
           return newValue;
         }
 
+        print("$oldValue::$newValue");
         var last = newValue.text.characters.last;
         return TextEditingValue(
             text: last, selection: TextSelection.collapsed(offset: 1));
@@ -131,6 +162,7 @@ class EditableCell extends StatelessWidget {
           border: InputBorder.none,
         ),
         inputFormatters: formatters,
+        
         onChanged: (value) {
           print(value);
           int num = int.parse(value);
