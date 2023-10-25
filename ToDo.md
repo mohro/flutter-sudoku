@@ -1,4 +1,5 @@
 ToDo's
+1. Remove dependency on TextField for EditableCell
 1. Highlight the number in all the cells when selected
 1. Allow selection of NonEditableCells.
 1. Capture click anywhere on a Cell. Currently it is only capturing click in TextField.
