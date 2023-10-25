@@ -1,13 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:tunning_sudoku/tunning_sudoku.dart';
 
-class Sudoku {
+class Sudoku extends ChangeNotifier {
   late SynchroSudoku reference;
   Sudoku(SynchroSudoku sudoku) {
     reference = sudoku;
   }
 
   static Sudoku newGame(Difficulty difficulty) {
-    SynchroSudoku s = SudokuGenerator().getFromDifficulty(difficulty: difficulty.difficulty);
+    SynchroSudoku s =
+        SudokuGenerator().getFromDifficulty(difficulty: difficulty.difficulty);
     s.board = s.clues.copy();
     return Sudoku(s);
   }
@@ -28,19 +30,17 @@ class Sudoku {
   bool isValid(int row, int col, int value) {
     return reference.board.isValid(n: value, r: row, c: col);
   }
-
-
 }
 
 enum Difficulty {
   easy(sudokuDifficulty: SudokuDifficulty.easy),
   hard(sudokuDifficulty: SudokuDifficulty.hard),
-  expert(sudokuDifficulty: SudokuDifficulty.expert),;
+  expert(sudokuDifficulty: SudokuDifficulty.expert),
+  ;
 
   const Difficulty({
-     required this.sudokuDifficulty,
-     }
-  );
+    required this.sudokuDifficulty,
+  });
 
   final SudokuDifficulty sudokuDifficulty;
 

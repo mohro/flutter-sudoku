@@ -34,14 +34,12 @@ class ColoredCell extends StatelessWidget {
   const ColoredCell({
     super.key,
     required this.boxSize,
-    required this.sudoku,
     required this.row,
     required this.col,
     required this.box,
   });
 
   final Size boxSize;
-  final Sudoku sudoku;
   final int row, col, box;
 
   bool highlighBackground(BuildContext context) {
@@ -53,13 +51,14 @@ class ColoredCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool highlightBackground = highlighBackground(context);
+
     return Focus(
       child: ColoredBox(
         color: highlightBackground ? Colors.red : Colors.green,
         child: SizedBox(
           width: boxSize.width,
           height: boxSize.height,
-          child: Cell(sudoku: sudoku, row: row, col: col),
+          child: Cell(row: row, col: col),
         ),
       ),
       onFocusChange: (focused) {
@@ -76,34 +75,30 @@ class ColoredCell extends StatelessWidget {
 class Cell extends StatelessWidget {
   const Cell({
     super.key,
-    required this.sudoku,
     required this.row,
     required this.col,
   });
 
-  final Sudoku sudoku;
   final int row;
   final int col;
 
   @override
   Widget build(BuildContext context) {
-    if (sudoku.editable(row, col)) {
-      return EditableCell(sudoku: sudoku, row: row, col: col);
+    if (context.watch<Sudoku>().editable(row, col)) {
+      return EditableCell(row: row, col: col);
     }
 
-    return NonEditableCell(sudoku: sudoku, row: row, col: col);
+    return NonEditableCell(row: row, col: col);
   }
 }
 
 class NonEditableCell extends StatelessWidget {
   const NonEditableCell({
     super.key,
-    required this.sudoku,
     required this.row,
     required this.col,
   });
 
-  final Sudoku sudoku;
   final int row;
   final int col;
   final TextStyle textStyle = const TextStyle(
@@ -113,7 +108,7 @@ class NonEditableCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      child: Text("${sudoku.clue(row, col)}",
+      child: Text("${context.watch<Sudoku>().clue(row, col)}",
           textAlign: TextAlign.center, style: textStyle),
     );
   }
@@ -122,12 +117,10 @@ class NonEditableCell extends StatelessWidget {
 class EditableCell extends StatelessWidget {
   EditableCell({
     super.key,
-    required this.sudoku,
     required this.row,
     required this.col,
   });
 
-  final Sudoku sudoku;
   final int row;
   final int col;
   final List<TextInputFormatter> formatters = <TextInputFormatter>[
@@ -162,12 +155,11 @@ class EditableCell extends StatelessWidget {
           border: InputBorder.none,
         ),
         inputFormatters: formatters,
-        
         onChanged: (value) {
           print(value);
           int num = int.parse(value);
-          sudoku.solve(row, col, num);
-          print(sudoku.isValid(row, col, num));
+          context.read<Sudoku>().solve(row, col, num);
+          print(context.read<Sudoku>().isValid(row, col, num));
         },
       ),
     );
