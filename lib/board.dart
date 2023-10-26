@@ -11,6 +11,21 @@ class SudokuBoard extends StatefulWidget {
 }
 
 class _SudokuBoardState extends State<SudokuBoard> with Box {
+  var focusNodes;
+  @override
+  void initState() {
+    super.initState();
+    focusNodes = List.generate(
+        widget.rows,
+        (row) => List.generate(
+            widget.cols, (col) => FocusNode(debugLabel: "$row$col")));
+  }
+
+  @override
+  void dispose() {
+    focusNodes.forEach((row) => {row.forEach((node) => node.dispose())});
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +34,8 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
       child: Center(
         child: LayoutBuilder(
           builder: (_, constraints) {
-            double size =
-                min(constraints.maxWidth / widget.cols, constraints.maxHeight / widget.rows);
+            double size = min(constraints.maxWidth / widget.cols,
+                constraints.maxHeight / widget.rows);
             final boxSize = Size(size, size);
 
             return Column(
@@ -40,7 +55,7 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   List<Widget> generateRow(int cols, Size boxSize, int row) {
     return [
       for (int col = 0; col < cols; col++)
-        ColoredCell(boxSize: boxSize, box: box(row, col), row: row, col: col)
+        ColoredCell(boxSize: boxSize, box: box(row, col), row: row, col: col, focusNode: focusNodes[row][col])
     ];
   }
 }

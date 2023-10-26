@@ -37,10 +37,12 @@ class ColoredCell extends StatelessWidget {
     required this.row,
     required this.col,
     required this.box,
+    required this.focusNode,
   });
 
   final Size boxSize;
   final int row, col, box;
+  final FocusNode focusNode;
 
   bool highlighBackground(BuildContext context) {
     return context.watch<SelectedCell>().row == row ||
@@ -52,22 +54,23 @@ class ColoredCell extends StatelessWidget {
   Widget build(BuildContext context) {
     bool highlightBackground = highlighBackground(context);
 
-    return Focus(
+    return GestureDetector(
+      onTap: () {
+        print("Here");
+        context
+            .read<SelectedCell>()
+            .changeLocation(row: row, col: col, box: box);
+
+        focusNode.requestFocus();
+      },
       child: ColoredBox(
         color: highlightBackground ? Colors.red : Colors.green,
         child: SizedBox(
           width: boxSize.width,
           height: boxSize.height,
-          child: Cell(row: row, col: col),
+          child: Cell(row: row, col: col, box: box, focusNode: focusNode),
         ),
       ),
-      onFocusChange: (focused) {
-        if (focused) {
-          context
-              .read<SelectedCell>()
-              .changeLocation(row: row, col: col, box: box);
-        }
-      },
     );
   }
 }
@@ -77,90 +80,94 @@ class Cell extends StatelessWidget {
     super.key,
     required this.row,
     required this.col,
+    required this.box,
+    required this.focusNode,
   });
 
-  final int row;
-  final int col;
+  final int row, col, box;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
     if (context.watch<Sudoku>().editable(row, col)) {
-      return EditableCell(row: row, col: col);
+      return TextCell(
+          row: row, col: col, box: box, value: ' ', focusNode: focusNode);
     }
 
-    return NonEditableCell(row: row, col: col);
+    String value = context.watch<Sudoku>().clue(row, col).toString();
+    return TextCell(row: row, col: col, box: box, value: value, focusNode: focusNode, ignoreEdits: true);
   }
 }
 
-class NonEditableCell extends StatelessWidget {
-  const NonEditableCell({
-    super.key,
-    required this.row,
-    required this.col,
-  });
+class TextCell extends StatefulWidget {
 
-  final int row;
-  final int col;
-  final TextStyle textStyle = const TextStyle(
+  TextCell(
+      {super.key,
+      required this.row,
+      required this.col,
+      required this.box,
+      required this.value,
+      required this.focusNode,
+      this.ignoreEdits = false});
+
+  final FocusNode? focusNode;
+  final int row, col, box;
+  final String value;
+  final bool ignoreEdits;
+
+  @override
+  State<TextCell> createState() => _TextCellState();
+}
+
+class _TextCellState extends State<TextCell> {
+  TextStyle textStyle = const TextStyle(
       fontWeight: FontWeight.bold, fontSize: 40, color: Colors.black54);
 
+  String value = ' ';
+  RegExp digitsOnly = RegExp(r'[1-9]');
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: Text("${context.watch<Sudoku>().clue(row, col)}",
-          textAlign: TextAlign.center, style: textStyle),
-    );
+  void initState() {
+    super.initState();
+    value = widget.value;
+    textStyle = value == ' '
+        ? const TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 40, color: Colors.amber)
+        : textStyle;
   }
-}
 
-class EditableCell extends StatelessWidget {
-  EditableCell({
-    super.key,
-    required this.row,
-    required this.col,
-  });
-
-  final int row;
-  final int col;
-  final List<TextInputFormatter> formatters = <TextInputFormatter>[
-    FilteringTextInputFormatter.allow(RegExp('[1-9]')),
-    TextInputFormatter.withFunction(
-      (TextEditingValue oldValue, TextEditingValue newValue) {
-        if (newValue.text.length <= 1) {
-          return newValue;
-        }
-
-        print("$oldValue::$newValue");
-        var last = newValue.text.characters.last;
-        return TextEditingValue(
-            text: last, selection: TextSelection.collapsed(offset: 1));
-      },
-    ),
-    LengthLimitingTextInputFormatter(1),
-  ];
-
-  final TextStyle textStyle = const TextStyle(
-      fontWeight: FontWeight.bold, fontSize: 40, color: Colors.black87);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: TextField(
-        textAlign: TextAlign.center,
-        textAlignVertical: TextAlignVertical.center,
-        style: textStyle,
-        showCursor: false,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-        ),
-        inputFormatters: formatters,
-        onChanged: (value) {
-          print(value);
-          int num = int.parse(value);
-          context.read<Sudoku>().solve(row, col, num);
-          print(context.read<Sudoku>().isValid(row, col, num));
-        },
+    // print("$value...");
+    return Focus(
+      focusNode: widget.focusNode,
+      onKey: (node, event) {
+        if (widget.ignoreEdits) {
+          return KeyEventResult.ignored;
+        }
+        
+        if (digitsOnly.hasMatch(event.character.toString())) {
+          setState(() {
+            value = event.character.toString();
+            context
+                .read<Sudoku>()
+                .solve(widget.row, widget.col, int.parse(value));
+          });
+
+          return KeyEventResult.handled;
+        } else if (event.logicalKey == LogicalKeyboardKey.backspace ||
+            event.logicalKey == LogicalKeyboardKey.delete) {
+          setState(() {
+            value = '';
+            context.read<Sudoku>().solve(widget.row, widget.col, 0);
+          });
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(value, textAlign: TextAlign.center, style: textStyle),
       ),
     );
   }
