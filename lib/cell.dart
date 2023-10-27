@@ -1,33 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sudoku/main.dart';
 import 'package:sudoku/sudoku.dart';
 import 'package:sudoku/utils.dart';
 
-mixin Box {
-  int index(int value) {
-    int result = -1;
-    if (value >= 0 && value <= 2) {
-      result = 0;
-    } else if (value >= 3 && value <= 5) {
-      result = 1;
-    } else if (value >= 6 && value <= 8) {
-      result = 2;
-    }
+class SelectedCell extends ChangeNotifier with Box {
+  int row = -1;
+  int col = -1;
+  int box = -1;
+  String value = '';
 
-    return result;
+  void changeLocation({required int row, required int col}) async {
+    print("$row :: $col");
+    this.row = row;
+    this.col = col;
+    box = calculateBox(row, col);
+    notifyListeners();
   }
 
-  int box(int row, int col) {
-    int rowMultiplier = index(row);
-    int colAddition = index(col);
+  void changeValue(String value) {
+    this.value = value;
+    notifyListeners();
+  }
 
-    if (rowMultiplier < 0 || colAddition < 0) {
-      return -1;
+  bool move(int rowInc, int colInc) {
+    if (rowInc == 0 && colInc == 0) {
+      return false;
     }
 
-    return 3 * rowMultiplier + colAddition;
+    if (rowInc != 0) {
+      int newRow = row + rowInc;
+      if (newRow >= 0 && newRow <= 8) {
+        changeLocation(row: newRow, col: col);
+        return true;
+      }
+    } else if (colInc != 0) {
+      int newCol = col + colInc;
+      if (newCol >= 0 && newCol <= 8) {
+        changeLocation(row: row, col: newCol);
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
@@ -73,7 +88,7 @@ class _ColoredCellState extends State<ColoredCell> {
       onTap: () {
         context
             .read<SelectedCell>()
-            .changeLocation(row: widget.row, col: widget.col, box: widget.box);
+            .changeLocation(row: widget.row, col: widget.col);
 
         widget.focusNode.requestFocus();
       },

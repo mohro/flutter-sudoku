@@ -5,7 +5,8 @@ ToDo's
 1. ~~Capture click anywhere on a Cell. Currently it is only capturing click in TextField.~~
 1. ~~When clicking on cell, offset should be end of current text.~~
 1. Add support for notes/possible numbers.
-1. Add support for arrow/keyboard navigation.
+1. ~~Add support for arrow/keyboard navigation.~~
+1. Add support for addressed navigation. n should enable navigation accross. 23 should set focus to second 3rd cell of box 2.
 1. Board should launch at a size where all grids are visible.
 1. Font size should adjust according to size of viewport.
 1. Make it easier to control colors/themes.
