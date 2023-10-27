@@ -30,19 +30,21 @@ class SelectedCell extends ChangeNotifier {
   int row = -1;
   int col = -1;
   int box = -1;
+  String value = '';
 
-  void changeLocation({
-    required int row, required int col, required int box
-  }) async {
-    print(row.toString() +" :: "+ col.toString());
+  void changeLocation(
+      {required int row, required int col, required int box}) async {
+    print("$row :: $col");
     this.row = row;
     this.col = col;
     this.box = box;
     notifyListeners();
   }
 
-
-
+  void changeValue(String value) {
+    this.value = value;
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {

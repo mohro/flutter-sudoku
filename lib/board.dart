@@ -55,7 +55,12 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   List<Widget> generateRow(int cols, Size boxSize, int row) {
     return [
       for (int col = 0; col < cols; col++)
-        ColoredCell(boxSize: boxSize, box: box(row, col), row: row, col: col, focusNode: focusNodes[row][col])
+        ColoredCell(
+            boxSize: boxSize,
+            box: box(row, col),
+            row: row,
+            col: col,
+            focusNode: focusNodes[row][col])
     ];
   }
 }

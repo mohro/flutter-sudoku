@@ -1,6 +1,6 @@
 ToDo's
 1. ~~Remove dependency on TextField for EditableCell~~
-1. Highlight the number in all the cells when selected
+1. ~~Highlight the number in all the cells when selected~~
 1. ~~Allow selection of NonEditableCells.~~
 1. ~~Capture click anywhere on a Cell. Currently it is only capturing click in TextField.~~
 1. ~~When clicking on cell, offset should be end of current text.~~
@@ -10,3 +10,5 @@ ToDo's
 1. Font size should adjust according to size of viewport.
 1. Make it easier to control colors/themes.
 1. Show cell as error if value is invalid.
+1. Highlighting completed awkwardly. Could have improvements. To be continued.
+1. Add support for undo. May require redoing the key handler.
