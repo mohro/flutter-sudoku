@@ -77,11 +77,22 @@ class _ColoredCellState extends State<ColoredCell> {
         : uneditableBackground;
   }
 
-  bool highlightBackground(BuildContext context) {
+  Color backgroundColor(BuildContext context, int row, int col) {
+    if (!context.read<Sudoku>().editable(row, col)) {
+      return defaultColor;
+    }
+
     SelectedCell selection = context.watch<SelectedCell>();
-    return selection.row == widget.row ||
+
+    if (selection.row == widget.row && selection.col == widget.col) {
+      return selectedCellColor;
+    } else if (selection.row == widget.row ||
         selection.col == widget.col ||
-        selection.box == widget.box;
+        selection.box == widget.box) {
+          return highlightedBackground;
+        }
+
+      return defaultColor;
   }
 
   @override
@@ -95,8 +106,7 @@ class _ColoredCellState extends State<ColoredCell> {
         widget.focusNode.requestFocus();
       },
       child: ColoredBox(
-        color:
-            highlightBackground(context) ? highlightedBackground : defaultColor,
+        color: backgroundColor(context, widget.row, widget.col),
         child: SizedBox(
           width: widget.boxSize.width,
           height: widget.boxSize.height,

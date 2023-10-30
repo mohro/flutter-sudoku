@@ -20,6 +20,7 @@ final TextStyle hintHighlightTextStyle = TextStyle(
 // Cell Colors
 const Color background = Colors.green;
 final Color highlightedBackground = Colors.green.shade600;
+final Color selectedCellColor = Colors.green.shade800;
 final Color uneditableBackground = Colors.green.shade700;
 
 mixin Box {
