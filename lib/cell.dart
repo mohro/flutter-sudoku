@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -162,6 +164,7 @@ class _TextCellState extends State<TextCell> {
   late TextStyle defaultTextStyle;
 
   String value = '';
+  var hints = List.generate(9, (index) => '');
 
   @override
   void initState() {
@@ -172,6 +175,10 @@ class _TextCellState extends State<TextCell> {
 
   @override
   Widget build(BuildContext context) {
+    Widget child = value != ''
+        ? Text(value, textAlign: TextAlign.center, style: textStyle(context))
+        : HintsWidget(hints);
+
     return Focus(
       focusNode: widget.focusNode,
       onFocusChange: (focused) => {
@@ -180,8 +187,7 @@ class _TextCellState extends State<TextCell> {
       onKey: (node, event) => handleKeyEvent(event, context),
       child: Container(
         alignment: Alignment.center,
-        child:
-            Text(value, textAlign: TextAlign.center, style: textStyle(context)),
+        child: child,
       ),
     );
   }
@@ -191,7 +197,9 @@ class _TextCellState extends State<TextCell> {
       return KeyEventResult.ignored;
     }
 
-    if (isDigitKeyEvent(event)) {
+    if (event.isControlPressed && isDigitKeyEvent(event)) {
+      handleHintEvent(event);
+    } else if (isDigitKeyEvent(event)) {
       setState(() {
         value = event.character.toString();
         context.read<Sudoku>().solve(widget.row, widget.col, int.parse(value));
@@ -241,5 +249,61 @@ class _TextCellState extends State<TextCell> {
   bool isDeleteKeyEvent(RawKeyEvent event) {
     return event.logicalKey == LogicalKeyboardKey.backspace ||
         event.logicalKey == LogicalKeyboardKey.delete;
+  }
+
+  void handleHintEvent(RawKeyEvent event) {
+    int value = int.parse(event.character.toString());
+    String newValue = hints[value - 1] == '' ? value.toString() : '';
+    setState(() {
+      hints[value - 1] = newValue;
+    });
+  }
+}
+
+class HintsWidget extends StatelessWidget {
+  const HintsWidget(
+    this.hints, {
+    super.key,
+  });
+
+  final List<String> hints;
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: LayoutBuilder(
+        builder: (_, constraints) {
+          double size =
+              min(constraints.maxWidth / 3, constraints.maxHeight / 3);
+          final boxSize = Size(size, size);
+
+          return Column(
+            children: [
+              for (int row = 0; row < 3; row++)
+                Row(
+                  children: generateRow(context, 3, boxSize, row),
+                )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  List<Widget> generateRow(
+      BuildContext context, int cols, Size boxSize, int row) {
+    return List.generate(cols, (col) {
+      String value = hints[row * 3 + col];
+      TextStyle style = context.watch<SelectedCell>().value == value
+          ? hintHighlightTextStyle
+          : hintTextStyle;
+      return SizedBox(
+          width: boxSize.width,
+          height: boxSize.height,
+          child: Center(
+              child: Text(
+            value,
+            style: style,
+          )));
+    });
   }
 }

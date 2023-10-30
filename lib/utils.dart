@@ -12,6 +12,10 @@ final TextStyle editableTextStyle =
 final TextStyle conflictTextStyle =
     TextStyle(fontWeight: FontWeight.bold, fontSize: 40, color: Colors.red);
 
+final TextStyle hintTextStyle =
+    TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black54);
+final TextStyle hintHighlightTextStyle = TextStyle(
+    fontWeight: FontWeight.bold, fontSize: 20, color: Colors.yellow.shade200);
 
 // Cell Colors
 const Color background = Colors.green;

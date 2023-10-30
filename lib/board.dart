@@ -58,29 +58,27 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => Sudoku.newGame(Difficulty.expert)),
+            create: (context) => Sudoku.newGame(Difficulty.easy)),
         ChangeNotifierProvider(create: (context) => selectedCell)
       ],
       child: FocusableActionDetector(
         shortcuts: _shortcutMap,
         actions: _actions,
-        child: Center(
-          child: LayoutBuilder(
-            builder: (_, constraints) {
-              double size = min(constraints.maxWidth / widget.cols,
-                  constraints.maxHeight / widget.rows);
-              final boxSize = Size(size, size);
+        child: LayoutBuilder(
+          builder: (_, constraints) {
+            double size = min(constraints.maxWidth / widget.cols,
+                constraints.maxHeight / widget.rows);
+            final boxSize = Size(size, size);
 
-              return Column(
-                children: [
-                  for (int row = 0; row < widget.rows; row++)
-                    Row(
-                      children: generateRow(widget.cols, boxSize, row),
-                    )
-                ],
-              );
-            },
-          ),
+            return Column(
+              children: [
+                for (int row = 0; row < widget.rows; row++)
+                  Row(
+                    children: generateRow(widget.cols, boxSize, row),
+                  )
+              ],
+            );
+          },
         ),
       ),
     );
