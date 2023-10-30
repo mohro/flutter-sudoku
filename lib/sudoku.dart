@@ -27,8 +27,29 @@ class Sudoku extends ChangeNotifier {
     reference.board.setCell(row, col, value);
   }
 
+  int count(List<int> list, int value) {
+    return list.fold(
+        0,
+        (previousValue, element) =>
+            element == value ? previousValue + 1 : previousValue);
+  }
+
+  bool isValidInRow(int row, int col, int value) {
+    return count(reference.board.getRow(row), value) <= 1;
+  }
+
+  bool isValidInColumn(int row, int col, int value) {
+    return count(reference.board.getColumn(col), value) <= 1;
+  }
+
+  bool isValidInBox(int row, int col, int value) {
+    return count(reference.board.getBox(r: row, c: col), value) <= 1;
+  }
+
   bool isValid(int row, int col, int value) {
-    return reference.board.isValid(n: value, r: row, c: col);
+    return isValidInBox(row, col, value) &&
+        isValidInColumn(row, col, value) &&
+        isValidInRow(row, col, value);
   }
 }
 

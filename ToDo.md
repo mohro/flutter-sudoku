@@ -7,6 +7,8 @@ ToDo's
 1. ~~Add support for notes/possible numbers.~~
 1. ~~Add support for arrow/keyboard navigation.~~
 1. ~~Enable highlighting in hint cells when number is selected.~~
+1. ~~Add sudoku validation functions. The original packages functions function incorrectly.~~
+1. Make tool bar part of Sudoku board package.
 1. Enable autopopulate all hints
 1. Support for highlighting multiple numbers.
 1. Support for modes. e.g., Pencil, navigation, normal.

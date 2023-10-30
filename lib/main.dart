@@ -31,44 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        body: Row(
-          children: [
-            leftMenu(constraints),
-            SudokuBoard(),
-          ],
-        ),
-      );
-    });
-  }
-
-  SafeArea leftMenu(BoxConstraints constraints) {
-    return SafeArea(
-      child: NavigationRail(
-        backgroundColor: Colors.amber,
-        extended: false,
-        destinations: [
-          NavigationRailDestination(
-            icon: Icon(Icons.arrow_outward),
-            label: Text('New'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.note_add),
-            label: Text('Pencil'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.map),
-            label: Text('Go To'),
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
-        },
-      ),
+    return Scaffold(
+      body: SudokuBoard(),
     );
   }
 }

@@ -15,6 +15,7 @@ class SudokuBoard extends StatefulWidget {
 class _SudokuBoardState extends State<SudokuBoard> with Box {
   late List<List<FocusNode>> focusNodes;
   SelectedCell selectedCell = SelectedCell();
+  var selectedIndex = 0;
 
   final Map<ShortcutActivator, Intent> _shortcutMap =
       const <ShortcutActivator, Intent>{
@@ -53,34 +54,68 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
     super.dispose();
   }
 
+  SafeArea leftMenu() {
+    return SafeArea(
+      child: NavigationRail(
+        backgroundColor: Colors.amber,
+        extended: false,
+        destinations: [
+          NavigationRailDestination(
+            icon: Icon(Icons.arrow_outward),
+            label: Text('New'),
+          ),
+          NavigationRailDestination(
+            icon: Icon(Icons.note_add),
+            label: Text('Pencil'),
+          ),
+          NavigationRailDestination(
+            icon: Icon(Icons.map),
+            label: Text('Go To'),
+          ),
+        ],
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (value) {
+          setState(() {
+            selectedIndex = value;
+          });
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (context) => Sudoku.newGame(Difficulty.easy)),
-        ChangeNotifierProvider(create: (context) => selectedCell)
-      ],
-      child: FocusableActionDetector(
-        shortcuts: _shortcutMap,
-        actions: _actions,
-        child: LayoutBuilder(
-          builder: (_, constraints) {
-            double size = min(constraints.maxWidth / widget.cols,
-                constraints.maxHeight / widget.rows);
-            final boxSize = Size(size, size);
-
-            return Column(
-              children: [
-                for (int row = 0; row < widget.rows; row++)
-                  Row(
-                    children: generateRow(widget.cols, boxSize, row),
-                  )
-              ],
-            );
-          },
+    return Row(
+      children: [
+        leftMenu(),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+                create: (context) => Sudoku.newGame(Difficulty.easy)),
+            ChangeNotifierProvider(create: (context) => selectedCell)
+          ],
+          child: FocusableActionDetector(
+            shortcuts: _shortcutMap,
+            actions: _actions,
+            child: LayoutBuilder(
+              builder: (_, constraints) {
+                double size = min(constraints.maxWidth / widget.cols,
+                    constraints.maxHeight / widget.rows);
+                final boxSize = Size(size, size);
+    
+                return Column(
+                  children: [
+                    for (int row = 0; row < widget.rows; row++)
+                      Row(
+                        children: generateRow(widget.cols, boxSize, row),
+                      )
+                  ],
+                );
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
