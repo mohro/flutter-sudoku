@@ -46,10 +46,28 @@ class Sudoku extends ChangeNotifier {
     return count(reference.board.getBox(r: row, c: col), value) <= 1;
   }
 
+  bool isAllowedInRow(int row, int col, int value) {
+    return count(reference.board.getRow(row), value) == 0;
+  }
+
+  bool isAllowedInColumn(int row, int col, int value) {
+    return count(reference.board.getColumn(col), value) == 0;
+  }
+
+  bool isAllowedInBox(int row, int col, int value) {
+    return count(reference.board.getBox(r: row, c: col), value) == 0;
+  }
+
   bool isValid(int row, int col, int value) {
     return isValidInBox(row, col, value) &&
         isValidInColumn(row, col, value) &&
         isValidInRow(row, col, value);
+  }
+
+  bool isAllowed(int row, int col, int value) {
+    return isAllowedInBox(row, col, value) &&
+        isAllowedInRow(row, col, value) &&
+        isAllowedInColumn(row, col, value);
   }
 }
 

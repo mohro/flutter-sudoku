@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class SelectedCell extends ChangeNotifier with Box {
   int col = -1;
   int box = -1;
   String value = '';
+  bool autoPopulate = false;
 
   void changeLocation({required int row, required int col}) async {
     print("$row :: $col");
@@ -45,6 +47,13 @@ class SelectedCell extends ChangeNotifier with Box {
     }
 
     return false;
+  }
+
+  void autoPopulateHints() {
+
+    autoPopulate = true;
+    Timer(const Duration(seconds: 1), () => autoPopulate = false);
+    print(autoPopulate);
   }
 }
 
@@ -185,6 +194,9 @@ class _TextCellState extends State<TextCell> {
 
   @override
   Widget build(BuildContext context) {
+    if (context.watch<SelectedCell>().autoPopulate) {
+      populateHints(context, hints);
+    }
     Widget child = value != ''
         ? Text(value, textAlign: TextAlign.center, style: textStyle(context))
         : HintsWidget(hints);
@@ -267,6 +279,16 @@ class _TextCellState extends State<TextCell> {
     setState(() {
       hints[value - 1] = newValue;
     });
+  }
+  
+  void populateHints(BuildContext context, List<String> hints) async {
+    for (var i = 1; i <= 9; i++) {
+      // bool result = context.watch<Sudoku>().isValid(widget.row, widget.col, i);
+      // print('${widget.row} :: ${widget.col} :: $i :: $result');
+      if (context.watch<Sudoku>().isAllowed(widget.row, widget.col, i)) {
+        hints[i-1] = i.toString();
+      }
+    }
   }
 }
 

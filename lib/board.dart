@@ -54,69 +54,58 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
     super.dispose();
   }
 
-  SafeArea leftMenu() {
-    return SafeArea(
-      child: NavigationRail(
-        backgroundColor: Colors.amber,
-        extended: false,
-        destinations: [
-          NavigationRailDestination(
-            icon: Icon(Icons.arrow_outward),
-            label: Text('New'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.note_add),
-            label: Text('Pencil'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.map),
-            label: Text('Go To'),
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (value) {
-          setState(() {
-            selectedIndex = value;
-          });
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        leftMenu(),
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-                create: (context) => Sudoku.newGame(Difficulty.easy)),
-            ChangeNotifierProvider(create: (context) => selectedCell)
-          ],
-          child: FocusableActionDetector(
-            shortcuts: _shortcutMap,
-            actions: _actions,
-            child: LayoutBuilder(
-              builder: (_, constraints) {
-                double size = min(constraints.maxWidth / widget.cols,
-                    constraints.maxHeight / widget.rows);
-                final boxSize = Size(size, size);
-    
-                return Column(
-                  children: [
-                    for (int row = 0; row < widget.rows; row++)
-                      Row(
-                        children: generateRow(widget.cols, boxSize, row),
-                      )
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (context) => Sudoku.newGame(Difficulty.easy)),
+          ChangeNotifierProvider(create: (context) => selectedCell)
+        ],
+        builder: (context, child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ButtonBar(
+                // spacing: 8,
+                // overflowAlignment: OverflowBarAlignment.center,
+                alignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          context.read<SelectedCell>().autoPopulateHints();
+                        });
+                        print("Trigger autopopulate");
+                      },
+                      
+                      icon: Icon(Icons.note_add)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.highlight)),
+                ],
+              ),
+              FocusableActionDetector(
+                shortcuts: _shortcutMap,
+                actions: _actions,
+                child: LayoutBuilder(
+                  builder: (_, constraints) {
+                    double size = min(constraints.maxWidth / widget.cols,
+                        constraints.maxHeight / widget.rows);
+                    final boxSize = Size(size, size);
+
+                    return Column(
+                      children: [
+                        for (int row = 0; row < widget.rows; row++)
+                          Row(
+                            children: generateRow(widget.cols, boxSize, row),
+                          )
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   List<Widget> generateRow(int cols, Size boxSize, int row) {
@@ -129,6 +118,25 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
             col: col,
             focusNode: focusNodes[row][col])
     ];
+  }
+}
+
+class SudokuTopBar extends StatelessWidget {
+  const SudokuTopBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ButtonBar(
+      // spacing: 8,
+      // overflowAlignment: OverflowBarAlignment.center,
+      alignment: MainAxisAlignment.start,
+      children: <Widget>[
+        IconButton(onPressed: () {}, icon: Icon(Icons.note_add)),
+        IconButton(onPressed: () {}, icon: Icon(Icons.highlight)),
+      ],
+    );
   }
 }
 
