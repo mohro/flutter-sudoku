@@ -194,7 +194,7 @@ class _TextCellState extends State<TextCell> {
 
   @override
   Widget build(BuildContext context) {
-    if (context.watch<SelectedCell>().autoPopulate) {
+    if (value == '' && context.watch<SelectedCell>().autoPopulate) {
       populateHints(context, hints);
     }
     Widget child = value != ''
