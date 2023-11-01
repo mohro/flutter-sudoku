@@ -50,10 +50,8 @@ class SelectedCell extends ChangeNotifier with Box {
   }
 
   void autoPopulateHints() {
-
     autoPopulate = true;
     Timer(const Duration(seconds: 1), () => autoPopulate = false);
-    print(autoPopulate);
   }
 }
 
@@ -98,10 +96,10 @@ class _ColoredCellState extends State<ColoredCell> {
     } else if (selection.row == widget.row ||
         selection.col == widget.col ||
         selection.box == widget.box) {
-          return highlightedBackground;
-        }
+      return highlightedBackground;
+    }
 
-      return defaultColor;
+    return defaultColor;
   }
 
   @override
@@ -228,14 +226,12 @@ class _TextCellState extends State<TextCell> {
         context.read<SelectedCell>().changeValue(value);
       });
 
-      return KeyEventResult.handled;
     } else if (isDeleteKeyEvent(event)) {
       setState(() {
         value = '';
         context.read<Sudoku>().solve(widget.row, widget.col, 0);
         context.read<SelectedCell>().changeValue(value);
       });
-      return KeyEventResult.handled;
     }
 
     return KeyEventResult.ignored;
@@ -280,13 +276,13 @@ class _TextCellState extends State<TextCell> {
       hints[value - 1] = newValue;
     });
   }
-  
+
   void populateHints(BuildContext context, List<String> hints) async {
     for (var i = 1; i <= 9; i++) {
       // bool result = context.watch<Sudoku>().isValid(widget.row, widget.col, i);
       // print('${widget.row} :: ${widget.col} :: $i :: $result');
       if (context.watch<Sudoku>().isAllowed(widget.row, widget.col, i)) {
-        hints[i-1] = i.toString();
+        hints[i - 1] = i.toString();
       }
     }
   }

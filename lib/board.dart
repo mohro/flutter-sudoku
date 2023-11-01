@@ -78,7 +78,6 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
                         });
                         print("Trigger autopopulate");
                       },
-                      
                       icon: Icon(Icons.note_add)),
                   IconButton(onPressed: () {}, icon: Icon(Icons.highlight)),
                 ],

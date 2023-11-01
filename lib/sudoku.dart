@@ -69,6 +69,10 @@ class Sudoku extends ChangeNotifier {
         isAllowedInRow(row, col, value) &&
         isAllowedInColumn(row, col, value);
   }
+
+  bool isSolved() {
+    return reference.board.isSolved();
+  }
 }
 
 enum Difficulty {
