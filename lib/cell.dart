@@ -27,7 +27,7 @@ class SelectedCell extends ChangeNotifier with Box {
     notifyListeners();
   }
 
-  bool move(int rowInc, int colInc) {
+  bool shift(int rowInc, int colInc) {
     if (rowInc == 0 && colInc == 0) {
       return false;
     }
@@ -62,12 +62,10 @@ class ColoredCell extends StatefulWidget {
     required this.row,
     required this.col,
     required this.box,
-    required this.focusNode,
   });
 
   final Size boxSize;
   final int row, col, box;
-  final FocusNode focusNode;
 
   @override
   State<ColoredCell> createState() => _ColoredCellState();
@@ -120,8 +118,7 @@ class _ColoredCellState extends State<ColoredCell> {
           child: Cell(
               row: widget.row,
               col: widget.col,
-              box: widget.box,
-              focusNode: widget.focusNode),
+              box: widget.box,),
         ),
       ),
     );
@@ -134,17 +131,15 @@ class Cell extends StatelessWidget {
     required this.row,
     required this.col,
     required this.box,
-    required this.focusNode,
   });
 
   final int row, col, box;
-  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
     if (context.watch<Sudoku>().editable(row, col)) {
       return TextCell(
-          row: row, col: col, box: box, value: '', focusNode: focusNode);
+          row: row, col: col, box: box, value: '');
     }
 
     String value = context.watch<Sudoku>().clue(row, col).toString();
@@ -153,7 +148,6 @@ class Cell extends StatelessWidget {
         col: col,
         box: box,
         value: value,
-        focusNode: focusNode,
         ignoreEdits: true);
   }
 }
@@ -165,10 +159,8 @@ class TextCell extends StatefulWidget {
       required this.col,
       required this.box,
       required this.value,
-      required this.focusNode,
       this.ignoreEdits = false});
 
-  final FocusNode? focusNode;
   final int row, col, box;
   final String value;
   final bool ignoreEdits;
@@ -202,7 +194,6 @@ class _TextCellState extends State<TextCell> {
         : HintsWidget(hints);
 
     return Focus(
-      focusNode: widget.focusNode,
       onFocusChange: (focused) => {
         if (focused) {context.read<SelectedCell>().changeValue(value)}
       },

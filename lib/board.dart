@@ -13,7 +13,6 @@ class SudokuBoard extends StatefulWidget {
 }
 
 class _SudokuBoardState extends State<SudokuBoard> with Box {
-  late List<List<FocusNode>> focusNodes;
   SelectedCell selectedCell = SelectedCell();
   var selectedIndex = 0;
 
@@ -31,27 +30,9 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   @override
   void initState() {
     super.initState();
-    focusNodes = initFocusNodes();
     _actions = <Type, Action<Intent>>{
-      NavigateIntent: NavigateAction(selectedCell, focusNodes),
+      NavigateIntent: NavigateAction(selectedCell),
     };
-  }
-
-  List<List<FocusNode>> initFocusNodes() {
-    return List.generate(
-        widget.rows,
-        (row) => List.generate(
-            widget.cols, (col) => FocusNode(debugLabel: "$row$col")));
-  }
-
-  @override
-  void dispose() {
-    for (var row in focusNodes) {
-      for (var node in row) {
-        node.dispose();
-      }
-    }
-    super.dispose();
   }
 
   @override
@@ -114,11 +95,11 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
     return [
       for (int col = 0; col < cols; col++)
         ColoredCell(
-            boxSize: boxSize,
-            box: calculateBox(row, col),
-            row: row,
-            col: col,
-            focusNode: focusNodes[row][col])
+          boxSize: boxSize,
+          box: calculateBox(row, col),
+          row: row,
+          col: col,
+        )
     ];
   }
 
@@ -198,15 +179,12 @@ class NavigateIntent extends Intent {
 }
 
 class NavigateAction extends Action<NavigateIntent> {
-  NavigateAction(this.model, this.focusNodes);
+  NavigateAction(this.model);
 
-  List<List<FocusNode>> focusNodes;
   final SelectedCell model;
 
   @override
   void invoke(covariant NavigateIntent intent) {
-    if (model.move(intent.row, intent.col)) {
-      focusNodes[model.row][model.col].requestFocus();
-    }
+    model.shift(intent.row, intent.col);
   }
 }
