@@ -76,7 +76,6 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
                         setState(() {
                           context.read<SelectedCell>().autoPopulateHints();
                         });
-                        print("Trigger autopopulate");
                       },
                       icon: Icon(Icons.note_add)),
                   IconButton(onPressed: () {}, icon: Icon(Icons.highlight)),
@@ -91,13 +90,17 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
                         constraints.maxHeight / widget.rows);
                     final boxSize = Size(size, size);
 
-                    return Column(
-                      children: [
-                        for (int row = 0; row < widget.rows; row++)
-                          Row(
-                            children: generateRow(widget.cols, boxSize, row),
-                          )
-                      ],
+                    return Focus(
+                      autofocus: true,
+                      onKey: (node, event) => handleKeyEvent(event, context),
+                      child: Column(
+                        children: [
+                          for (int row = 0; row < widget.rows; row++)
+                            Row(
+                              children: generateRow(widget.cols, boxSize, row),
+                            )
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -117,6 +120,55 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
             col: col,
             focusNode: focusNodes[row][col])
     ];
+  }
+
+  KeyEventResult handleKeyEvent(RawKeyEvent event, BuildContext context) {
+    if (ignoreEvent(context)) {
+      return KeyEventResult.ignored;
+    }
+
+    String value = '';
+
+    if (event.isControlPressed && isDigitKeyEvent(event)) {
+      handleHintEvent(event);
+    } else if (isDigitKeyEvent(event)) {
+      setState(() {
+        value = event.character.toString();
+        context
+            .read<Sudoku>()
+            .solve(selectedCell.row, selectedCell.col, int.parse(value));
+        context.read<SelectedCell>().changeValue(value);
+      });
+    } else if (isDeleteKeyEvent(event)) {
+      setState(() {
+        value = '';
+        context.read<Sudoku>().solve(selectedCell.row, selectedCell.col, 0);
+        context.read<SelectedCell>().changeValue(value);
+      });
+    }
+
+    return KeyEventResult.ignored;
+  }
+
+  bool ignoreEvent(BuildContext context) {
+    return !context.read<Sudoku>().editable(selectedCell.row, selectedCell.col);
+  }
+
+  bool isDigitKeyEvent(RawKeyEvent event) {
+    return digitsOnly.hasMatch(event.character.toString());
+  }
+
+  bool isDeleteKeyEvent(RawKeyEvent event) {
+    return event.logicalKey == LogicalKeyboardKey.backspace ||
+        event.logicalKey == LogicalKeyboardKey.delete;
+  }
+
+  void handleHintEvent(RawKeyEvent event) async {
+    int value = int.parse(event.character.toString());
+    // String newValue = hints[value - 1] == '' ? value.toString() : '';
+    setState(() {
+      // hints[value - 1] = newValue;
+    });
   }
 }
 

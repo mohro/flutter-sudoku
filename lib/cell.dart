@@ -22,7 +22,7 @@ class SelectedCell extends ChangeNotifier with Box {
     notifyListeners();
   }
 
-  void changeValue(String value) {
+  void changeValue(String value) async {
     this.value = value;
     notifyListeners();
   }
@@ -110,7 +110,7 @@ class _ColoredCellState extends State<ColoredCell> {
             .read<SelectedCell>()
             .changeLocation(row: widget.row, col: widget.col);
 
-        widget.focusNode.requestFocus();
+        // widget.focusNode.requestFocus();
       },
       child: ColoredBox(
         color: backgroundColor(context, widget.row, widget.col),
@@ -195,6 +195,8 @@ class _TextCellState extends State<TextCell> {
     if (value == '' && context.watch<SelectedCell>().autoPopulate) {
       populateHints(context, hints);
     }
+    int upValue = context.watch<Sudoku>().clue(widget.row, widget.col);
+    value = upValue > 0 ? upValue.toString() : '';
     Widget child = value != ''
         ? Text(value, textAlign: TextAlign.center, style: textStyle(context))
         : HintsWidget(hints);
@@ -204,7 +206,7 @@ class _TextCellState extends State<TextCell> {
       onFocusChange: (focused) => {
         if (focused) {context.read<SelectedCell>().changeValue(value)}
       },
-      onKey: (node, event) => handleKeyEvent(event, context),
+      // onKey: (node, event) => handleKeyEvent(event, context),
       child: Container(
         alignment: Alignment.center,
         child: child,
@@ -225,7 +227,6 @@ class _TextCellState extends State<TextCell> {
         context.read<Sudoku>().solve(widget.row, widget.col, int.parse(value));
         context.read<SelectedCell>().changeValue(value);
       });
-
     } else if (isDeleteKeyEvent(event)) {
       setState(() {
         value = '';
