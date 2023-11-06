@@ -107,15 +107,15 @@ class _ColoredCellState extends State<ColoredCell> {
   }
 
   Color backgroundColor(BuildContext context, int row, int col) {
+    SelectedCell selection = context.watch<SelectedCell>();
+    if (selection.row == widget.row && selection.col == widget.col) {
+      return selectedCellColor;
+    }
     if (!context.read<Sudoku>().editable(row, col)) {
       return defaultColor;
     }
 
-    SelectedCell selection = context.watch<SelectedCell>();
-
-    if (selection.row == widget.row && selection.col == widget.col) {
-      return selectedCellColor;
-    } else if (selection.row == widget.row ||
+    if (selection.row == widget.row ||
         selection.col == widget.col ||
         selection.box == widget.box) {
       return highlightedBackground;
@@ -235,14 +235,6 @@ class _TextCellState extends State<TextCell> {
     }
 
     return defaultTextStyle;
-  }
-
-  void populateHints(BuildContext context, List<String> hints) async {
-    for (var i = 1; i <= 9; i++) {
-      if (context.watch<Sudoku>().isAllowed(widget.row, widget.col, i)) {
-        hints[i - 1] = i.toString();
-      }
-    }
   }
 }
 

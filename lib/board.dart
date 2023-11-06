@@ -57,7 +57,7 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
                   IconButton(
                       onPressed: () {
                         setState(() {
-                          context.read<SelectedCell>().autoPopulateHints();
+                          autoPopulateHints();
                         });
                       },
                       icon: Icon(Icons.note_add)),
@@ -150,6 +150,21 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
     int row = selectedCell.row, col = selectedCell.col;
     int value = int.parse(event.character.toString());
     matrix.setHints(row, col, value);
+  }
+
+  void autoPopulateHints() async {
+    for (var row = 0; row < 9; row++) {
+      for (var col = 0; col < 9; col++) {
+        if (sudoku.clue(row, col) != 0) {
+          continue;
+        }
+        for (var hint = 1; hint <= 9; hint++) {
+          if (sudoku.isAllowed(row, col, hint)) {
+            matrix.setHints(row, col, hint);
+          }
+        }
+      }
+    }
   }
 }
 
