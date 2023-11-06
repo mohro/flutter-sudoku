@@ -15,11 +15,17 @@ class Sudoku extends ChangeNotifier {
   }
 
   int clue(int row, int col) {
+    if (row < 0 || row > 8 || col < 0 || col > 8) {
+      return 0;
+    }
     int result = reference.board.getCell(row, col);
     return result;
   }
 
   bool editable(int row, int col) {
+    if (row < 0 || row > 8 || col < 0 || col > 8) {
+      return false;
+    }
     return reference.clues.getCell(row, col) == 0;
   }
 

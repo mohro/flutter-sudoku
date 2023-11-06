@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sudoku/sudoku.dart';
 import 'package:sudoku/utils.dart';
@@ -19,11 +17,6 @@ class SelectedCell extends ChangeNotifier with Box {
     this.row = row;
     this.col = col;
     box = calculateBox(row, col);
-    notifyListeners();
-  }
-
-  void changeValue(String value) async {
-    this.value = value;
     notifyListeners();
   }
 
@@ -49,9 +42,40 @@ class SelectedCell extends ChangeNotifier with Box {
     return false;
   }
 
+  void changeValue(String value) {
+    if (this.value == value) {
+      return;
+    }
+    this.value = value;
+    notifyListeners();
+  }
+
+  void changeValueInt(int value) {
+    changeValue(value.toString());
+  }
+
   void autoPopulateHints() {
     autoPopulate = true;
-    Timer(const Duration(seconds: 1), () => autoPopulate = false);
+  }
+}
+
+class HintMatrix extends ChangeNotifier {
+  Map<String, List<String>> _hints = {};
+
+  void setHints(int row, int col, int value) {
+    String key = '$row$col';
+    List<String> values = _hints.putIfAbsent(key, initList);
+    values[value - 1] = emptyOrValue(values, value);
+    notifyListeners();
+  }
+
+  String emptyOrValue(List<String> values, int value) =>
+      values[value - 1] == '' ? value.toString() : '';
+
+  List<String> initList() => List.generate(9, (index) => '');
+
+  List<String> getHints(int row, int col) {
+    return _hints.putIfAbsent('$row$col', initList);
   }
 }
 
@@ -107,8 +131,6 @@ class _ColoredCellState extends State<ColoredCell> {
         context
             .read<SelectedCell>()
             .changeLocation(row: widget.row, col: widget.col);
-
-        // widget.focusNode.requestFocus();
       },
       child: ColoredBox(
         color: backgroundColor(context, widget.row, widget.col),
@@ -116,9 +138,10 @@ class _ColoredCellState extends State<ColoredCell> {
           width: widget.boxSize.width,
           height: widget.boxSize.height,
           child: Cell(
-              row: widget.row,
-              col: widget.col,
-              box: widget.box,),
+            row: widget.row,
+            col: widget.col,
+            box: widget.box,
+          ),
         ),
       ),
     );
@@ -138,17 +161,12 @@ class Cell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (context.watch<Sudoku>().editable(row, col)) {
-      return TextCell(
-          row: row, col: col, box: box, value: '');
+      return TextCell(row: row, col: col, box: box, value: '');
     }
 
     String value = context.watch<Sudoku>().clue(row, col).toString();
     return TextCell(
-        row: row,
-        col: col,
-        box: box,
-        value: value,
-        ignoreEdits: true);
+        row: row, col: col, box: box, value: value, ignoreEdits: true);
   }
 }
 
@@ -184,49 +202,17 @@ class _TextCellState extends State<TextCell> {
 
   @override
   Widget build(BuildContext context) {
-    if (value == '' && context.watch<SelectedCell>().autoPopulate) {
-      populateHints(context, hints);
-    }
     int upValue = context.watch<Sudoku>().clue(widget.row, widget.col);
     value = upValue > 0 ? upValue.toString() : '';
     Widget child = value != ''
         ? Text(value, textAlign: TextAlign.center, style: textStyle(context))
-        : HintsWidget(hints);
+        : HintsWidget(
+            context.watch<HintMatrix>().getHints(widget.row, widget.col));
 
-    return Focus(
-      onFocusChange: (focused) => {
-        if (focused) {context.read<SelectedCell>().changeValue(value)}
-      },
-      // onKey: (node, event) => handleKeyEvent(event, context),
-      child: Container(
-        alignment: Alignment.center,
-        child: child,
-      ),
+    return Container(
+      alignment: Alignment.center,
+      child: child,
     );
-  }
-
-  KeyEventResult handleKeyEvent(RawKeyEvent event, BuildContext context) {
-    if (widget.ignoreEdits) {
-      return KeyEventResult.ignored;
-    }
-
-    if (event.isControlPressed && isDigitKeyEvent(event)) {
-      handleHintEvent(event);
-    } else if (isDigitKeyEvent(event)) {
-      setState(() {
-        value = event.character.toString();
-        context.read<Sudoku>().solve(widget.row, widget.col, int.parse(value));
-        context.read<SelectedCell>().changeValue(value);
-      });
-    } else if (isDeleteKeyEvent(event)) {
-      setState(() {
-        value = '';
-        context.read<Sudoku>().solve(widget.row, widget.col, 0);
-        context.read<SelectedCell>().changeValue(value);
-      });
-    }
-
-    return KeyEventResult.ignored;
   }
 
   TextStyle textStyle(BuildContext context) {
@@ -244,35 +230,15 @@ class _TextCellState extends State<TextCell> {
       return defaultTextStyle;
     }
 
-    String selectedValue = selection.value;
-    if (selectedValue == value) {
+    if (selection.value == value) {
       return highlightTextStyle;
     }
 
     return defaultTextStyle;
   }
 
-  bool isDigitKeyEvent(RawKeyEvent event) {
-    return digitsOnly.hasMatch(event.character.toString());
-  }
-
-  bool isDeleteKeyEvent(RawKeyEvent event) {
-    return event.logicalKey == LogicalKeyboardKey.backspace ||
-        event.logicalKey == LogicalKeyboardKey.delete;
-  }
-
-  void handleHintEvent(RawKeyEvent event) {
-    int value = int.parse(event.character.toString());
-    String newValue = hints[value - 1] == '' ? value.toString() : '';
-    setState(() {
-      hints[value - 1] = newValue;
-    });
-  }
-
   void populateHints(BuildContext context, List<String> hints) async {
     for (var i = 1; i <= 9; i++) {
-      // bool result = context.watch<Sudoku>().isValid(widget.row, widget.col, i);
-      // print('${widget.row} :: ${widget.col} :: $i :: $result');
       if (context.watch<Sudoku>().isAllowed(widget.row, widget.col, i)) {
         hints[i - 1] = i.toString();
       }

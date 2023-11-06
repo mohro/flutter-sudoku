@@ -12,7 +12,8 @@ ToDo's
 1. ~~Do not highlight fixed cells.~~
 1. ~~Highlight selected cell differently~~
 1. ~~Enable autopopulate all hints~~
-1. Rewrite with Gesture Detector moved to Board level instead of cell level
+1. ~~Rewrite with Gesture Detector moved to Board level instead of cell level~~
+1. Reimplement auto generation of hints. More logic has moved to Board level.
 1. End game when sudoku is solved.
 1. Start new game with desired difficulty level.
 1. Support for highlighting multiple numbers, or by selecting the number in the numpad. Shouldn't have to select a cell with the particular number to highlight the rest.

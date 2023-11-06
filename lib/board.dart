@@ -14,6 +14,8 @@ class SudokuBoard extends StatefulWidget {
 
 class _SudokuBoardState extends State<SudokuBoard> with Box {
   SelectedCell selectedCell = SelectedCell();
+  Sudoku sudoku = Sudoku.newGame(Difficulty.easy);
+  HintMatrix matrix = HintMatrix();
   var selectedIndex = 0;
 
   final Map<ShortcutActivator, Intent> _shortcutMap =
@@ -31,7 +33,7 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   void initState() {
     super.initState();
     _actions = <Type, Action<Intent>>{
-      NavigateIntent: NavigateAction(selectedCell),
+      NavigateIntent: NavigateAction(selectedCell, sudoku),
     };
   }
 
@@ -39,9 +41,9 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-              create: (context) => Sudoku.newGame(Difficulty.easy)),
-          ChangeNotifierProvider(create: (context) => selectedCell)
+          ChangeNotifierProvider(create: (context) => sudoku),
+          ChangeNotifierProvider(create: (context) => selectedCell),
+          ChangeNotifierProvider(create: (context) => matrix),
         ],
         builder: (context, child) {
           return Column(
@@ -145,11 +147,9 @@ class _SudokuBoardState extends State<SudokuBoard> with Box {
   }
 
   void handleHintEvent(RawKeyEvent event) async {
+    int row = selectedCell.row, col = selectedCell.col;
     int value = int.parse(event.character.toString());
-    // String newValue = hints[value - 1] == '' ? value.toString() : '';
-    setState(() {
-      // hints[value - 1] = newValue;
-    });
+    matrix.setHints(row, col, value);
   }
 }
 
@@ -179,12 +179,15 @@ class NavigateIntent extends Intent {
 }
 
 class NavigateAction extends Action<NavigateIntent> {
-  NavigateAction(this.model);
+  NavigateAction(this.cell, this.sudoku);
 
-  final SelectedCell model;
+  final SelectedCell cell;
+  final Sudoku sudoku;
 
   @override
   void invoke(covariant NavigateIntent intent) {
-    model.shift(intent.row, intent.col);
+    if (cell.shift(intent.row, intent.col)) {
+      cell.changeValueInt(sudoku.clue(cell.row, cell.col));
+    }
   }
 }
