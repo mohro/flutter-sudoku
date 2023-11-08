@@ -128,9 +128,9 @@ class _ColoredCellState extends State<ColoredCell> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context
-            .read<SelectedCell>()
-            .changeLocation(row: widget.row, col: widget.col);
+        SelectedCell selectedCell = context.read<SelectedCell>();
+        selectedCell.changeLocation(row: widget.row, col: widget.col);
+        selectedCell.changeValueInt(context.read<Sudoku>().clue(widget.row, widget.col));
       },
       child: ColoredBox(
         color: backgroundColor(context, widget.row, widget.col),
