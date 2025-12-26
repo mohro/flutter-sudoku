@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { RotateCcw, Pencil, Eraser, Play } from 'lucide-react';
+import { RotateCcw, Pencil, Eraser, Play, CheckCircle2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import type { Difficulty } from '../../types/sudoku';
 
@@ -15,6 +15,8 @@ export const Controls: React.FC = () => {
     const timer = useGameStore(state => state.timer);
     const tickTimer = useGameStore(state => state.tickTimer);
     const status = useGameStore(state => state.status);
+    const toggleValidation = useGameStore(state => state.toggleValidation);
+    const validateMode = useGameStore(state => state.validateMode);
 
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
 
@@ -56,7 +58,7 @@ export const Controls: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-5 gap-2">
                 <button
                     onClick={undo}
                     disabled={history.length === 0}
@@ -85,6 +87,19 @@ export const Controls: React.FC = () => {
                 >
                     <Eraser size={20} />
                     <span className="text-xs mt-1">Erase</span>
+                </button>
+
+                <button
+                    onClick={toggleValidation}
+                    className={clsx(
+                        "flex flex-col items-center justify-center p-3 rounded-lg transition-colors border",
+                        validateMode
+                            ? "bg-slate-800 border-green-500 text-green-400"
+                            : "bg-slate-800 border-transparent hover:bg-slate-700 text-slate-300"
+                    )}
+                >
+                    <CheckCircle2 size={20} />
+                    <span className="text-xs mt-1">Check</span>
                 </button>
 
                 <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800/40 text-slate-300 border border-slate-700/50">

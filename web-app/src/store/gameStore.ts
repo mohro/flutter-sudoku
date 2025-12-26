@@ -12,6 +12,8 @@ interface GameStore extends BoardState {
     undo: () => void;
     toggleNoteMode: () => void;
     tickTimer: () => void;
+    toggleValidation: () => void; // User toggle
+    validateMode: boolean; // State
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -32,6 +34,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     history: [],
     solution: null,
     isNoteMode: false,
+    validateMode: false, // Default off
 
     startGame: (difficulty) => {
         let { puzzle, solution } = getSudoku(difficulty);
@@ -115,6 +118,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
             // Set Value
             target.value = target.value === value ? null : value;
             target.notes = []; // Clear notes if value set
+
+            // Validation check
+            const { validateMode, solution } = get();
+            if (validateMode && solution && target.value !== null) {
+                const solVal = parseInt(solution[row * 9 + col]);
+                target.isValid = target.value === solVal;
+            } else {
+                target.isValid = true;
+            }
         }
 
         // 3. Check Win Condition
@@ -149,5 +161,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
     tickTimer: () => set(state => {
         if (state.status !== 'playing') return {};
         return { timer: state.timer + 1 };
+    }),
+
+    toggleValidation: () => set(state => {
+        const newMode = !state.validateMode;
+        // Re-calculate validity for all cells when toggled on
+        if (newMode) {
+            const { cells, solution } = state;
+            if (!solution) return { validateMode: newMode };
+
+            const newCells = cells.map((row, r) => row.map((cell, c) => {
+                // Simple validation: Compare with solution
+                // (There are other ways like checking conflicts, but solution match is easiest/most robust)
+                const solVal = parseInt(solution[r * 9 + c]);
+                const isValid = cell.value === null || cell.value === solVal;
+                return { ...cell, isValid };
+            }));
+            return { validateMode: newMode, cells: newCells };
+        } else {
+            // Reset validity to true (visuals off)
+            const { cells } = state;
+            const newCells = cells.map(r => r.map(c => ({ ...c, isValid: true })));
+            return { validateMode: newMode, cells: newCells };
+        }
     })
 }));
