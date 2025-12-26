@@ -3,13 +3,14 @@ import { getSudoku } from 'sudoku-gen';
 import type { BoardState, Difficulty, CellData } from '../types/sudoku';
 
 interface GameStore extends BoardState {
+    isNoteMode: boolean;
     // Actions
     startGame: (difficulty: Difficulty) => void;
     selectCell: (row: number, col: number) => void;
-    setCellValue: (value: number | null, isNoteMode: boolean) => void;
+    setCellValue: (value: number | null, isNoteMode?: boolean) => void;
     moveSelection: (rowDelta: number, colDelta: number) => void;
     undo: () => void;
-    toggleNote: (value: number) => void;
+    toggleNoteMode: () => void;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -28,7 +29,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     timer: 0,
     selectedCell: null,
     history: [],
+    selectedCell: null,
+    history: [],
     solution: null,
+    isNoteMode: false,
 
     startGame: (difficulty) => {
         const { puzzle, solution } = getSudoku(difficulty);
@@ -70,8 +74,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ selectedCell: { row: newRow, col: newCol } });
     },
 
-    setCellValue: (value, isNoteMode) => {
-        const { selectedCell, cells, status } = get();
+    setCellValue: (value, modeOverride) => {
+        const { selectedCell, cells, status, history, isNoteMode } = get();
         if (!selectedCell || status !== 'playing') return;
 
         const { row, col } = selectedCell;
@@ -79,11 +83,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
         if (cell.initial) return; // Cannot edit initial cells
 
-        // Deep copy for immutability
+        // 1. Capture History (Deep Copy)
+        const newHistory = [...history, cells.map(r => r.map(c => ({ ...c })))];
+        if (newHistory.length > 50) newHistory.shift(); // Limit history
+
+        // 2. Modify State
         const newCells = cells.map(r => r.map(c => ({ ...c })));
         const target = newCells[row][col];
 
-        if (isNoteMode && value !== null) {
+        const effectiveMode = modeOverride !== undefined ? modeOverride : isNoteMode;
+
+        if (effectiveMode && value !== null) {
             // Toggle note
             if (target.notes.includes(value)) {
                 target.notes = target.notes.filter(n => n !== value);
@@ -92,20 +102,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
             }
         } else {
             // Set Value
-            // If same value, clear it (toggle off)
             target.value = target.value === value ? null : value;
             target.notes = []; // Clear notes if value set
         }
 
-        set({ cells: newCells });
-        // TODO: Add validation check here or history push
+        set({ cells: newCells, history: newHistory });
     },
 
     undo: () => {
-        // Implementation needed later
+        const { history } = get();
+        if (history.length === 0) return;
+
+        const previousCells = history[history.length - 1];
+        const newHistory = history.slice(0, -1);
+
+        set({ cells: previousCells, history: newHistory });
     },
 
-    toggleNote: (val) => {
-        // implementation via setCellValue wrapper usually
-    }
+    toggleNoteMode: () => set(state => ({ isNoteMode: !state.isNoteMode }))
 }));
