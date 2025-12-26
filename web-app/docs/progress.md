@@ -13,15 +13,13 @@
   - **Undo**: Single step undo supported.
   - **Notes Mode**: Toggleable small pencil marks.
   - **Keyboard Support**: Full navigation (Arrows + VIM `hjkl`) and Shortcuts (`n`, `v`, `u`).
+  - **Advanced Navigation**: Command Mode (`g` for coordinates, `b` for boxes).
+  - **Validation**: Visual error checking toggle.
+  - **Timer**: Real-time tracking.
+  - **Win State**: Victory modal and game reset.
 
-## Remaining Features (To Be Implemented)
-
-### 1. Game Logic
-- [ ] **Timer**: Trace solve time (currently static 00:00).
-- [ ] **Win Condition**: Detect when board is full & correct -> Show "Victory" modal.
-- [ ] **Validation**: Visual indication of conflicts (Optional).
-
-### 2. Polish
-- [ ] **Responsive Mobile View**: Adjust cell sizes for phone screens.
-- [ ] **Input Interface**: On-screen number pad (mouse users).
-- [ ] **Animations**: Win effect, number pop-in.
+## Parked / Future Features
+- **On-Screen Numpad**: Deferred (User prefers keyboard/desktop focus).
+- **Animations**: Visual flair for cell entry/win (Nice to have).
+- **Mobile Optimization**: Layout adjustments for small screens (Focus is Desktop).
+- **Settings Modal**: Configurable options (Timer visibility, etc).

@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# Zen Sudoku
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, keyboard-first Sudoku application built with React, Vite, and Tailwind CSS.
+Features a premium aesthetic, VIM-style navigation, and robust game logic.
 
-Currently, two official plugins are available:
+![Sudoku App Screenshot](public/screenshot.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Infinite Puzzles**: Generates unique puzzles with 4 difficulty levels.
+- **Keyboard First**: Optimized for power users.
+    - `H`/`J`/`K`/`L` for navigation.
+    - `G` for coordinate jumps ("Go To").
+    - `B` for box jumps.
+- **Assistance Tools**:
+    - **Notes Mode**: Annotate cells with pencil marks (`N`).
+    - **Validation**: Check for errors in real-time or on demand (`V`).
+    - **Undo**: Infinite undo history (`U`).
+- **Game Logic**:
+    - Real-time Timer.
+    - Win detection with victory screen.
+    - Difficulty selection (Easy, Medium, Hard, Expert).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **Framework**: React 18
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS v3
+- **State**: Zustand
+- **Icons**: Lucide React
+- **Engine**: sudoku-gen
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1.  Navigate to the directory:
+    ```bash
+    cd web-app
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start development server:
+    ```bash
+    npm run dev
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Keyboard Shortcuts
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Key | Action |
+| :--- | :--- |
+| **Arrows** | Move Selection |
+| **H / J / K / L** | Left / Down / Up / Right |
+| **1 - 9** | Enter Number / Toggle Note |
+| **Backspace / Del** | Clear Cell |
+| **U** | Undo |
+| **N** | Toggle Notes Mode |
+| **V** | Toggle Validation |
+| **G** | **GoTo Cell** (Follow with `Row` + `Col`) |
+| **B** | **GoTo Box** (Follow with `1-9`) |
+| **Esc** | Cancel Command |
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+*Created as part of the Sudoku Rewrite Project.*
