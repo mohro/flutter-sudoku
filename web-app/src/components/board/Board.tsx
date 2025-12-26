@@ -42,7 +42,7 @@ export const Board: React.FC = () => {
                 default:
                     const num = parseInt(e.key);
                     if (num >= 1 && num <= 9) {
-                        setCellValue(num, false);
+                        setCellValue(num);
                     }
                     break;
             }

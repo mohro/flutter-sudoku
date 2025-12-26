@@ -29,8 +29,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     timer: 0,
     selectedCell: null,
     history: [],
-    selectedCell: null,
-    history: [],
     solution: null,
     isNoteMode: false,
 

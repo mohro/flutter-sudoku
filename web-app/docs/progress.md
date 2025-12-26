@@ -2,32 +2,26 @@
 
 ## What Has Been Built (Completed)
 - **Core Engine**:
-  - Valid Sudoku generation (Unique solutions verified).
-  - Robust State Management for the board.
+  - Valid Sudoku generation (Verified).
+  - Robust State Management (Zustand).
 - **Premium UI**:
   - Dark Mode "Zen" aesthetic.
-  - Glassmorphism effects (blur, subtle transparency).
-  - Smooth Highlighting:
-    - Selected Cell
-    - Related Cells (Row/Col/Box)
-    - Same-Number Highlighting (Find all '5's)
-- **Interaction**:
-  - **Full Keyboard Support**: Arrow keys to move, Numbers to type, Backspace to delete.
-  - Mouse/Touch support for selection.
+  - Smooth Highlighting.
+- **Controls & Interaction**:
+  - **Difficulty Selector**: Easy/Medium/Hard/Expert.
+  - **New Game**: Instant generation.
+  - **Undo**: Single step undo supported.
+  - **Notes Mode**: Toggleable small pencil marks.
+  - **Keyboard Support**: Full navigation and entry.
 
 ## Remaining Features (To Be Implemented)
 
-### 1. Game Controls
-- [ ] **Difficulty Selector**: Switch between Easy, Medium, Hard, Expert.
-- [ ] **New Game Button**: functionality to restart/generate fresh.
-- [ ] **Undo/Redo**: Essential for a good UX.
-- [ ] **Notes Mode**: Toggle to input pencil marks (candidates) instead of final values.
-
-### 2. Game Logic
-- [ ] **Timer**: Trace solve time.
+### 1. Game Logic
+- [ ] **Timer**: Trace solve time (currently static 00:00).
 - [ ] **Win Condition**: Detect when board is full & correct -> Show "Victory" modal.
-- [ ] **Mistake Counter**: (Optional) Limit errors to 3?
+- [ ] **Validation**: Visual indication of conflicts (Optional).
 
-### 3. Polish
+### 2. Polish
 - [ ] **Responsive Mobile View**: Adjust cell sizes for phone screens.
-- [ ] **Animations**: pop-in effects for numbers.
+- [ ] **Input Interface**: On-screen number pad (mouse users).
+- [ ] **Animations**: Win effect, number pop-in.
