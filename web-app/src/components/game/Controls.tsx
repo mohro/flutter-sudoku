@@ -12,8 +12,24 @@ export const Controls: React.FC = () => {
     const difficulty = useGameStore(state => state.difficulty);
     const history = useGameStore(state => state.history);
     const setCellValue = useGameStore(state => state.setCellValue);
+    const timer = useGameStore(state => state.timer);
+    const tickTimer = useGameStore(state => state.tickTimer);
+    const status = useGameStore(state => state.status);
 
     const difficulties: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
+
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            if (status === 'playing') tickTimer();
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [status, tickTimer]);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
 
     return (
         <div className="w-full max-w-md flex flex-col gap-4">
@@ -71,10 +87,9 @@ export const Controls: React.FC = () => {
                     <span className="text-xs mt-1">Erase</span>
                 </button>
 
-                {/* Place value button (optional for mobile, but keeping clean for now) */}
-                <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800/20 text-slate-500">
-                    <span className="text-xs font-mono">00:00</span>
-                    <span className="text-[10px]">Timer</span>
+                <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800/40 text-slate-300 border border-slate-700/50">
+                    <span className="text-sm font-mono font-bold text-blue-300">{formatTime(timer)}</span>
+                    <span className="text-[10px] uppercase tracking-wider opacity-60">Time</span>
                 </div>
             </div>
         </div>

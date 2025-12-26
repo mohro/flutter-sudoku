@@ -11,6 +11,7 @@ interface GameStore extends BoardState {
     moveSelection: (rowDelta: number, colDelta: number) => void;
     undo: () => void;
     toggleNoteMode: () => void;
+    tickTimer: () => void;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -33,7 +34,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
     isNoteMode: false,
 
     startGame: (difficulty) => {
-        const { puzzle, solution } = getSudoku(difficulty);
+        let { puzzle, solution } = getSudoku(difficulty);
+
+        // DEBUG: Make it almost solved
+        if (true) {
+            const solArr = solution.split('');
+            // Hide 3 random cells
+            for (let i = 0; i < 3; i++) {
+                const idx = Math.floor(Math.random() * 81);
+                solArr[idx] = '-';
+            }
+            puzzle = solArr.join('');
+        }
 
         const newCells: CellData[][] = [];
 
@@ -132,5 +144,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ cells: previousCells, history: newHistory });
     },
 
-    toggleNoteMode: () => set(state => ({ isNoteMode: !state.isNoteMode }))
+    toggleNoteMode: () => set(state => ({ isNoteMode: !state.isNoteMode })),
+
+    tickTimer: () => set(state => {
+        if (state.status !== 'playing') return {};
+        return { timer: state.timer + 1 };
+    })
 }));
