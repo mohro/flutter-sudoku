@@ -1,10 +1,12 @@
 import { Layout } from './components/layout/Layout';
 import { Board } from './components/board/Board';
 import { Controls } from './components/game/Controls';
+import { WinnerModal } from './components/game/WinnerModal';
 
 function App() {
   return (
     <Layout>
+      <WinnerModal />
       <div className="flex flex-col gap-6 items-center">
         <header className="text-center space-y-2">
           <h1 className="text-4xl font-light tracking-[0.2em] text-white uppercase drop-shadow-md">Sudoku</h1>

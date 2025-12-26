@@ -34,6 +34,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     startGame: (difficulty) => {
         const { puzzle, solution } = getSudoku(difficulty);
+
         const newCells: CellData[][] = [];
 
         // Parse specific string format from sudoku-gen (81 chars)
@@ -102,6 +103,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
             // Set Value
             target.value = target.value === value ? null : value;
             target.notes = []; // Clear notes if value set
+        }
+
+        // 3. Check Win Condition
+        const isFull = newCells.every(r => r.every(c => c.value !== null));
+
+        if (isFull) {
+            // Compare with solution
+            const currentString = newCells.map(r => r.map(c => c.value).join('')).join('');
+            const { solution } = get();
+
+            if (currentString === solution) {
+                set({ cells: newCells, history: newHistory, status: 'won' });
+                return;
+            }
         }
 
         set({ cells: newCells, history: newHistory });
