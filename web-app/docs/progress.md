@@ -12,7 +12,7 @@
   - **New Game**: Instant generation.
   - **Undo**: Single step undo supported.
   - **Notes Mode**: Toggleable small pencil marks.
-  - **Keyboard Support**: Full navigation and entry.
+  - **Keyboard Support**: Full navigation (Arrows + VIM `hjkl`) and Shortcuts (`n`, `v`, `u`).
 
 ## Remaining Features (To Be Implemented)
 

@@ -7,6 +7,10 @@ export const Board: React.FC = () => {
     const moveSelection = useGameStore(state => state.moveSelection);
     const setCellValue = useGameStore(state => state.setCellValue);
     const startGame = useGameStore(state => state.startGame);
+    const undo = useGameStore(state => state.undo);
+    const toggleNoteMode = useGameStore(state => state.toggleNoteMode);
+    const toggleValidation = useGameStore(state => state.toggleValidation);
+    // const difficulty = useGameStore(state => state.difficulty); // For quick restart if needed
 
     const initialized = useRef(false);
 
@@ -31,13 +35,32 @@ export const Board: React.FC = () => {
             }
 
             switch (e.key) {
+                // Navigation (Arrows)
                 case 'ArrowUp': moveSelection(-1, 0); break;
                 case 'ArrowDown': moveSelection(1, 0); break;
                 case 'ArrowLeft': moveSelection(0, -1); break;
                 case 'ArrowRight': moveSelection(0, 1); break;
+
+                // Navigation (VIM)
+                case 'k': moveSelection(-1, 0); break;
+                case 'j': moveSelection(1, 0); break;
+                case 'h': moveSelection(0, -1); break;
+                case 'l': moveSelection(0, 1); break;
+
+                // Actions
+                case 'u':
+                    undo();
+                    break;
+                case 'n':
+                    toggleNoteMode();
+                    break;
+                case 'v':
+                    toggleValidation();
+                    break;
+
                 case 'Backspace':
                 case 'Delete':
-                    setCellValue(null, false);
+                    setCellValue(null);
                     break;
                 default:
                     const num = parseInt(e.key);
