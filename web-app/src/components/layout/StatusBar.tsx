@@ -11,7 +11,6 @@ export const StatusBar: React.FC = () => {
     const validateMode = useGameStore(state => state.validateMode);
     const toggleValidation = useGameStore(state => state.toggleValidation);
     const theme = useGameStore(state => state.theme);
-    const setTheme = useGameStore(state => state.setTheme);
     const history = useGameStore(state => state.history);
 
     const formatTime = (seconds: number) => {
@@ -80,29 +79,12 @@ export const StatusBar: React.FC = () => {
                 </span>
             </div>
 
-            {/* Right: Theme & Settings */}
+            {/* Right: Theme Indicator */}
             <div className="flex items-center gap-3">
-                <div className="flex flex-col items-end gap-0.5">
-                    <span className="text-[10px] uppercase tracking-tighter text-txt-secondary opacity-50 font-bold">Theme</span>
-                    <span className="text-xs capitalize text-accent font-medium leading-none">{theme}</span>
-                </div>
-                <div className="flex bg-primary/30 p-1.5 rounded-full border border-slate-700/30 gap-1.5">
-                    {(['midnight', 'forest', 'retro'] as const).map((t) => (
-                        <button
-                            key={t}
-                            onClick={() => setTheme(t)}
-                            className={clsx(
-                                "w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center border",
-                                theme === t ? "border-accent scale-110 shadow-lg" : "border-transparent opacity-50 hover:opacity-100"
-                            )}
-                            title={t.charAt(0).toUpperCase() + t.slice(1)}
-                        >
-                            <div className={clsx(
-                                "w-3 h-3 rounded-full",
-                                t === 'midnight' ? "bg-blue-600" : t === 'forest' ? "bg-emerald-600" : "bg-orange-400"
-                            )} />
-                        </button>
-                    ))}
+                <div className="px-4 py-2 bg-primary/30 rounded-full border border-slate-700/30">
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-txt-secondary">
+                        Theme: <span className="text-accent">{theme}</span>
+                    </span>
                 </div>
             </div>
         </div>

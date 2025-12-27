@@ -51,16 +51,18 @@ export const Cell: React.FC<CellProps> = ({ data }) => {
                     {value}
                 </span>
             ) : (
-                <div className="grid grid-cols-3 gap-[1px] w-full h-full p-0.5 pointer-events-none opacity-80">
+                <div className="grid grid-cols-3 grid-rows-3 w-full h-full p-0.5 pointer-events-none">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
-                        <div key={n} className="flex items-center justify-center">
-                            {notes.includes(n) && (
+                        <div key={n} className="flex items-center justify-center h-full w-full">
+                            {notes.includes(n) ? (
                                 <span className={clsx(
-                                    "text-[8px] sm:text-[10px] leading-none",
-                                    highlightedDigit === n ? "text-highlight-digit font-bold scale-125 bg-secondary/80 rounded px-0.5" : "text-txt-secondary"
+                                    "text-[9px] sm:text-[12px] font-bold leading-none transition-all duration-150",
+                                    highlightedDigit === n ? "text-highlight-digit scale-125 drop-shadow-sm" : "text-txt-secondary opacity-80"
                                 )}>
                                     {n}
                                 </span>
+                            ) : (
+                                <div className="invisible text-[9px] sm:text-[12px]">0</div> // Placeholder to keep grid stable
                             )}
                         </div>
                     ))}

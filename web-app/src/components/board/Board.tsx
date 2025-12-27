@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { Cell } from './Cell';
+import { clsx } from 'clsx';
 
 export const Board: React.FC = () => {
     const cells = useGameStore(state => state.cells);
@@ -140,7 +141,7 @@ export const Board: React.FC = () => {
                     break;
                 case 't':
                 case 'T':
-                    const themes = ['midnight', 'forest', 'retro'] as const;
+                    const themes = ['midnight', 'forest', 'retro', 'sand', 'arctic', 'neon'] as const;
                     const nextTheme = themes[(themes.indexOf(theme) + 1) % themes.length];
                     setTheme(nextTheme);
                     break;
@@ -197,21 +198,19 @@ export const Board: React.FC = () => {
             <div className="flex justify-center w-full px-2">
                 <div className="inline-grid bg-secondary/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-cell-border"
                     style={{
-                        gridTemplateColumns: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
-                        gridTemplateRows: showGuides ? 'minmax(300px, 600px) 32px' : 'minmax(300px, 600px)',
+                        gridTemplateColumns: '32px minmax(300px, 600px)',
+                        gridTemplateRows: 'minmax(300px, 600px) 32px',
                         gap: '4px'
                     }}>
 
                     {/* Left Guide */}
-                    {showGuides && (
-                        <div className="grid grid-rows-9 h-full w-full select-none">
-                            {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex items-center justify-end text-sm text-txt-secondary font-mono font-bold pr-2">
-                                    {i + 1}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    <div className={clsx("grid grid-rows-9 h-full w-full select-none transition-opacity duration-300", showGuides ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <div key={i} className="flex items-center justify-end text-sm text-txt-secondary font-mono font-bold pr-2">
+                                {i + 1}
+                            </div>
+                        ))}
+                    </div>
 
                     {/* The Board */}
                     <div className="aspect-square w-full h-full">
@@ -225,18 +224,16 @@ export const Board: React.FC = () => {
                     </div>
 
                     {/* Corner */}
-                    {showGuides && <div className="text-txt-secondary font-mono text-xs flex items-start justify-end p-2 select-none opacity-50">#</div>}
+                    <div className={clsx("text-txt-secondary font-mono text-xs flex items-start justify-end p-2 select-none opacity-50 transition-opacity duration-300", showGuides ? "opacity-30" : "opacity-0")}>#</div>
 
                     {/* Bottom Guide */}
-                    {showGuides && (
-                        <div className="grid grid-cols-9 w-full h-full select-none">
-                            {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex items-start justify-center text-sm text-txt-secondary font-mono font-bold pt-1">
-                                    {i + 1}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    <div className={clsx("grid grid-cols-9 w-full h-full select-none transition-opacity duration-300", showGuides ? "opacity-100" : "opacity-0 pointer-events-none")}>
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <div key={i} className="flex items-start justify-center text-sm text-txt-secondary font-mono font-bold pt-1">
+                                {i + 1}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

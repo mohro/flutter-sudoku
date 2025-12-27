@@ -18,8 +18,8 @@ interface GameStore extends BoardState {
     showGuides: boolean;
     setHighlightedDigit: (digit: number | null) => void;
     highlightedDigit: number | null;
-    theme: 'midnight' | 'forest' | 'retro';
-    setTheme: (theme: 'midnight' | 'forest' | 'retro') => void;
+    theme: 'midnight' | 'forest' | 'retro' | 'sand' | 'arctic' | 'neon';
+    setTheme: (theme: 'midnight' | 'forest' | 'retro' | 'sand' | 'arctic' | 'neon') => void;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({

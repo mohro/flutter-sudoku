@@ -8,7 +8,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         const root = document.documentElement;
         console.log('Theme changed to:', theme);
         // Remove old theme classes
-        root.classList.remove('theme-midnight', 'theme-forest', 'theme-retro');
+        root.classList.remove('theme-midnight', 'theme-forest', 'theme-retro', 'theme-sand', 'theme-arctic', 'theme-neon');
         // Add current theme class
         root.classList.add(`theme-${theme}`);
         console.log('Applied class:', `theme-${theme}`, 'Current classes:', root.className);
