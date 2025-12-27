@@ -23,3 +23,6 @@
 - **Animations**: Visual flair for cell entry/win (Nice to have).
 - **Mobile Optimization**: Layout adjustments for small screens (Focus is Desktop).
 - **Settings Modal**: Configurable options (Timer visibility, etc).
+- **Row/Col Guides**: Toggleable margin coordinates.
+- **Digit Highlighting**: "Find all 3s" mode (including notes).
+- **Theming**: Quick-switch color themes.
