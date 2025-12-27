@@ -10,6 +10,8 @@ export const Board: React.FC = () => {
     const undo = useGameStore(state => state.undo);
     const toggleNoteMode = useGameStore(state => state.toggleNoteMode);
     const toggleValidation = useGameStore(state => state.toggleValidation);
+    const toggleGuides = useGameStore(state => state.toggleGuides);
+    const showGuides = useGameStore(state => state.showGuides);
     // const difficulty = useGameStore(state => state.difficulty); // For quick restart if needed
     const selectCell = useGameStore(state => state.selectCell);
 
@@ -115,6 +117,9 @@ export const Board: React.FC = () => {
                 case 'v':
                     toggleValidation();
                     break;
+                case 'G': // Shift+g
+                    toggleGuides();
+                    break;
 
                 case 'Backspace':
                 case 'Delete':
@@ -158,12 +163,32 @@ export const Board: React.FC = () => {
             )}
 
             <div className="bg-slate-800/40 p-2 sm:p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-slate-700/50">
-                <div className="grid grid-cols-9 border-2 border-slate-500/50 rounded-lg overflow-hidden bg-slate-900">
-                    {cells.map((row, rIndex) => (
-                        row.map((cell, cIndex) => (
-                            <Cell key={`${rIndex}-${cIndex}`} data={cell} />
-                        ))
-                    ))}
+                <div className="flex flex-col">
+                    {showGuides && (
+                        <div className="flex mb-1 pl-[2rem]"> {/* Offset for left guide */}
+                            {Array.from({ length: 9 }).map((_, i) => (
+                                <div key={i} className="flex-1 text-center text-xs text-slate-500 font-mono">{i + 1}</div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="flex">
+                        {showGuides && (
+                            <div className="flex flex-col justify-around mr-1 text-xs text-slate-500 font-mono w-[1.5rem]">
+                                {Array.from({ length: 9 }).map((_, i) => (
+                                    <div key={i} className="text-center">{i + 1}</div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="flex-1 grid grid-cols-9 border-2 border-slate-500/50 rounded-lg overflow-hidden bg-slate-900 aspect-square">
+                            {cells.map((row, rIndex) => (
+                                row.map((cell, cIndex) => (
+                                    <Cell key={`${rIndex}-${cIndex}`} data={cell} />
+                                ))
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

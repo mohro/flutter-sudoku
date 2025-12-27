@@ -14,6 +14,8 @@ interface GameStore extends BoardState {
     tickTimer: () => void;
     toggleValidation: () => void; // User toggle
     validateMode: boolean; // State
+    toggleGuides: () => void;
+    showGuides: boolean;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -35,6 +37,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     solution: null,
     isNoteMode: false,
     validateMode: false, // Default off
+    showGuides: false,
 
     startGame: (difficulty) => {
         let { puzzle, solution } = getSudoku(difficulty);
@@ -184,5 +187,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
             const newCells = cells.map(r => r.map(c => ({ ...c, isValid: true })));
             return { validateMode: newMode, cells: newCells };
         }
-    })
+    }),
+
+    showGuides: false,
+    toggleGuides: () => set(state => ({ showGuides: !state.showGuides }))
 }));
