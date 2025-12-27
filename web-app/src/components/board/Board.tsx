@@ -14,11 +14,12 @@ export const Board: React.FC = () => {
     const showGuides = useGameStore(state => state.showGuides);
     // const difficulty = useGameStore(state => state.difficulty); // For quick restart if needed
     const selectCell = useGameStore(state => state.selectCell);
+    const setHighlightedDigit = useGameStore(state => state.setHighlightedDigit);
 
     const initialized = useRef(false);
 
     // Command Mode State
-    const [cmdMode, setCmdMode] = React.useState<'none' | 'goto' | 'box'>('none');
+    const [cmdMode, setCmdMode] = React.useState<'none' | 'goto' | 'box' | 'find'>('none');
     const [cmdBuffer, setCmdBuffer] = React.useState('');
 
     useEffect(() => {
@@ -40,10 +41,21 @@ export const Board: React.FC = () => {
             if (e.key === 'Escape') {
                 setCmdMode('none');
                 setCmdBuffer('');
+                setHighlightedDigit(null); // Clear highlight on Escape
                 return;
             }
 
             // Command Mode Handling
+            if (cmdMode === 'find') {
+                const num = parseInt(e.key);
+                if (!isNaN(num) && num >= 1 && num <= 9) {
+                    setHighlightedDigit(num);
+                    setCmdMode('none');
+                    setCmdBuffer('');
+                }
+                return;
+            }
+
             if (cmdMode === 'goto') {
                 const num = parseInt(e.key);
                 if (!isNaN(num) && num >= 1 && num <= 9) {
@@ -106,6 +118,10 @@ export const Board: React.FC = () => {
                     setCmdMode('box');
                     setCmdBuffer('');
                     break;
+                case 'f':
+                    setCmdMode('find');
+                    setCmdBuffer('');
+                    break;
 
                 // Actions
                 case 'u':
@@ -134,13 +150,17 @@ export const Board: React.FC = () => {
                         // Alternate clear key for VIM users?
                         setCellValue(null);
                     }
+                    else if (e.key === 'x') {
+                        // Clear highlight
+                        setHighlightedDigit(null);
+                    }
                     break;
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation]);
+    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit]);
 
     console.log("Rendering Board, cells:", cells);
 
@@ -157,31 +177,51 @@ export const Board: React.FC = () => {
             {/* Command HUD */}
             {cmdMode !== 'none' && (
                 <div className="absolute -top-12 bg-slate-900/90 text-blue-400 px-4 py-2 rounded-lg border border-blue-500/30 shadow-xl font-mono animate-in fade-in slide-in-from-bottom-2">
-                    <span className="text-slate-400 mr-2">{cmdMode === 'goto' ? 'GOTO CELL' : 'GOTO BOX'}</span>
+                    <span className="text-slate-400 mr-2">
+                        {cmdMode === 'goto' && 'GOTO CELL'}
+                        {cmdMode === 'box' && 'GOTO BOX'}
+                        {cmdMode === 'find' && 'FIND VALUE'}
+                    </span>
                     <span className="font-bold text-xl">{cmdBuffer}<span className="animate-pulse">_</span></span>
                 </div>
             )}
 
-            <div className="bg-slate-800/40 p-2 sm:p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-slate-700/50">
-                <div className="flex flex-col">
+            <div className="flex justify-center w-full px-2">
+                <div className="inline-grid bg-slate-800/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-slate-700/50"
+                    style={{
+                        gridTemplateColumns: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
+                        gridTemplateRows: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
+                        gap: '4px'
+                    }}>
+
+                    {/* Corner */}
+                    {showGuides && <div className="text-slate-600 font-mono text-xs flex items-end justify-end p-2 select-none">#</div>}
+
+                    {/* Top Guide */}
                     {showGuides && (
-                        <div className="flex mb-1 pl-[2rem]"> {/* Offset for left guide */}
+                        <div className="grid grid-cols-9 w-full h-full select-none">
                             {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex-1 text-center text-xs text-slate-500 font-mono">{i + 1}</div>
+                                <div key={i} className="flex items-end justify-center text-sm text-slate-500 font-mono font-bold pb-1">
+                                    {i + 1}
+                                </div>
                             ))}
                         </div>
                     )}
 
-                    <div className="flex">
-                        {showGuides && (
-                            <div className="flex flex-col justify-around mr-1 text-xs text-slate-500 font-mono w-[1.5rem]">
-                                {Array.from({ length: 9 }).map((_, i) => (
-                                    <div key={i} className="text-center">{i + 1}</div>
-                                ))}
-                            </div>
-                        )}
+                    {/* Left Guide */}
+                    {showGuides && (
+                        <div className="grid grid-rows-9 h-full w-full select-none">
+                            {Array.from({ length: 9 }).map((_, i) => (
+                                <div key={i} className="flex items-center justify-end text-sm text-slate-500 font-mono font-bold pr-2">
+                                    {i + 1}
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                        <div className="flex-1 grid grid-cols-9 border-2 border-slate-500/50 rounded-lg overflow-hidden bg-slate-900 aspect-square">
+                    {/* The Board */}
+                    <div className="aspect-square w-full h-full">
+                        <div className="grid grid-cols-9 grid-rows-9 w-full h-full border-2 border-slate-500/50 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
                             {cells.map((row, rIndex) => (
                                 row.map((cell, cIndex) => (
                                     <Cell key={`${rIndex}-${cIndex}`} data={cell} />

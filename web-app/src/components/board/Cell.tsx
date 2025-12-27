@@ -8,47 +8,59 @@ interface CellProps {
 }
 
 export const Cell: React.FC<CellProps> = ({ data }) => {
-    const { row, col, value, initial, notes } = data;
-    const { selectedCell, selectCell: setSelected, cells } = useGameStore();
+    const { row, col, value, initial, notes, isValid } = data;
+    const selectedCell = useGameStore(state => state.selectedCell);
+    const selectCell = useGameStore(state => state.selectCell);
+    const validateMode = useGameStore(state => state.validateMode);
+    const highlightedDigit = useGameStore(state => state.highlightedDigit);
 
     const isSelected = selectedCell?.row === row && selectedCell?.col === col;
 
     // Highlight logic
-    const isRelated = selectedCell && (selectedCell.row === row || selectedCell.col === col ||
-        (Math.floor(selectedCell.row / 3) === Math.floor(row / 3) && Math.floor(selectedCell.col / 3) === Math.floor(col / 3)));
+    const isRelated = !isSelected && selectedCell && (selectedCell.row === row || selectedCell.col === col || (Math.floor(selectedCell.row / 3) === Math.floor(row / 3) && Math.floor(selectedCell.col / 3) === Math.floor(col / 3)));
 
-    const isNumberMatch = selectedCell && cells[selectedCell.row][selectedCell.col].value === value && value !== null;
-
-    // Border logic for 3x3 grids
-    const borderRight = (col + 1) % 3 === 0 && col !== 8 ? 'border-r-2 border-r-slate-500/50' : 'border-r border-r-slate-700/50';
-    const borderBottom = (row + 1) % 3 === 0 && row !== 8 ? 'border-b-2 border-b-slate-500/50' : 'border-b border-b-slate-700/50';
+    // Highlight Logic
+    const isHighlightedValue = highlightedDigit !== null && value === highlightedDigit;
 
     return (
         <div
-            onClick={() => setSelected(row, col)}
             className={clsx(
-                "relative flex items-center justify-center text-2xl font-medium cursor-pointer transition-all duration-75 select-none h-12 sm:h-14 w-12 sm:w-14",
-                borderRight,
-                borderBottom,
-                // Background colors
-                isSelected ? "bg-blue-600/90 text-white shadow-lg z-10 scale-105 rounded-md" :
-                    isNumberMatch ? "bg-blue-900/60 text-blue-100" :
-                        isRelated ? "bg-slate-800/80" :
-                            "bg-slate-800/30 hover:bg-slate-800/50",
-                // Text colors
-                initial ? "text-slate-100 font-bold" : "text-blue-300",
-                // Error state (future)
-                !data.isValid && "text-red-400 bg-red-900/20"
+                "w-full h-full flex items-center justify-center text-xl sm:text-2xl cursor-pointer transition-all duration-200 select-none relative",
+                // Base Borders
+                col % 3 === 2 && col !== 8 && "border-r border-slate-500/50",
+                row % 3 === 2 && row !== 8 && "border-b border-slate-500/50",
+
+                // Interaction States
+                isSelected && "bg-blue-500/40 shadow-inner ring-2 ring-blue-400 z-10",
+                isRelated && !isHighlightedValue && "bg-blue-500/10",
+                !isSelected && !isRelated && !isHighlightedValue && "hover:bg-white/5",
+
+                // Validation Error
+                !isValid && validateMode && "bg-red-500/50 text-white animate-pulse",
+
+                // Digit Highlight (Values)
+                isHighlightedValue && "bg-yellow-500/40 ring-1 ring-yellow-400/50 text-yellow-100"
             )}
+            onClick={() => selectCell(row, col)}
         >
             {value ? (
-                <span>{value}</span>
+                <span className={clsx(
+                    initial ? "font-bold text-white scale-100" : "font-medium text-blue-200 scale-100",
+                    isHighlightedValue && "text-white scale-110 font-bold drop-shadow-md"
+                )}>
+                    {value}
+                </span>
             ) : (
-                <div className="grid grid-cols-3 gap-0.5 p-0.5 w-full h-full pointer-events-none">
+                <div className="grid grid-cols-3 gap-[1px] w-full h-full p-0.5 pointer-events-none opacity-80">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
                         <div key={n} className="flex items-center justify-center">
                             {notes.includes(n) && (
-                                <span className="text-[8px] leading-none text-slate-400 font-normal">{n}</span>
+                                <span className={clsx(
+                                    "text-[8px] sm:text-[10px] leading-none",
+                                    highlightedDigit === n ? "text-yellow-400 font-bold scale-125 bg-yellow-900/40 rounded px-0.5" : "text-slate-400"
+                                )}>
+                                    {n}
+                                </span>
                             )}
                         </div>
                     ))}

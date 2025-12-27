@@ -7,14 +7,14 @@ The application works best with keyboard navigation.
 - **H / J / K / L**: VIM-style navigation (Left / Down / Up / Right)
 
 ## Advanced Navigation (Turbo Mode)
-- **G**: **GOTO Cell**. Press `g`, then type Row Number (1-9) and Column Number (1-9).
-    - Example: `g` `5` `5` jumps to the center cell.
-- **B**: **GOTO Box**. Press `b`, then type Box Number (1-9).
-    - Boxes are numbered 1-9 starting from top-left (reading order).
+- **G**: **GOTO Cell** (Follow with Row + Col)
+- **B**: **GOTO Box** (Follow with 1-9)
+- **F**: **FIND Digit** (Follow with 1-9). Highlights all instances of that number (Values + Notes).
 
 ## Game Actions
 - **Number Keys (1-9)**: Enter number / Toggle note
 - **Backspace / Delete / C**: Clear cell
+- **X**: Clear Highlight
 - **U**: Undo last move
 - **N**: Toggle Notes Mode (Pencil)
 - **V**: Toggle Validation Mode (Check)

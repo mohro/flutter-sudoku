@@ -16,6 +16,8 @@ interface GameStore extends BoardState {
     validateMode: boolean; // State
     toggleGuides: () => void;
     showGuides: boolean;
+    setHighlightedDigit: (digit: number | null) => void;
+    highlightedDigit: number | null;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -38,6 +40,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     isNoteMode: false,
     validateMode: false, // Default off
     showGuides: false,
+    highlightedDigit: null,
 
     startGame: (difficulty) => {
         let { puzzle, solution } = getSudoku(difficulty);
@@ -190,5 +193,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }),
 
     showGuides: false,
-    toggleGuides: () => set(state => ({ showGuides: !state.showGuides }))
+    toggleGuides: () => set(state => ({ showGuides: !state.showGuides })),
+
+    highlightedDigit: null,
+    setHighlightedDigit: (digit) => set({ highlightedDigit: digit })
 }));
