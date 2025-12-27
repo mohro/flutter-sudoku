@@ -1,13 +1,12 @@
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { Pencil, Eraser, RotateCcw, CheckCircle2, Clock } from 'lucide-react';
+import { Pencil, RotateCcw, CheckCircle2, Clock } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const StatusBar: React.FC = () => {
     const isNoteMode = useGameStore(state => state.isNoteMode);
     const toggleNoteMode = useGameStore(state => state.toggleNoteMode);
     const undo = useGameStore(state => state.undo);
-    const setCellValue = useGameStore(state => state.setCellValue);
     const timer = useGameStore(state => state.timer);
     const validateMode = useGameStore(state => state.validateMode);
     const toggleValidation = useGameStore(state => state.toggleValidation);
@@ -33,7 +32,7 @@ export const StatusBar: React.FC = () => {
             onClick={onClick}
             disabled={disabled}
             className={clsx(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-200 text-xs font-medium",
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-200 text-sm font-medium",
                 disabled ? "opacity-30 cursor-not-allowed border-transparent" :
                     active
                         ? `bg-secondary/80 ${activeColor}`
@@ -64,46 +63,43 @@ export const StatusBar: React.FC = () => {
                 />
                 <div className="h-4 w-[1px] bg-slate-700/50 mx-1" />
                 <button
-                    onClick={() => setCellValue(null)}
-                    className="p-1.5 text-txt-secondary hover:text-accent transition-colors rounded-lg hover:bg-secondary/50"
-                    title="Erase"
-                >
-                    <Eraser size={16} />
-                </button>
-                <button
                     onClick={undo}
                     disabled={history.length === 0}
                     className="p-1.5 text-txt-secondary hover:text-accent disabled:opacity-30 transition-colors rounded-lg hover:bg-secondary/50"
                     title="Undo"
                 >
-                    <RotateCcw size={16} />
+                    <RotateCcw size={18} />
                 </button>
             </div>
 
             {/* Middle/Center: Timer */}
-            <div className="flex items-center gap-2 px-4 py-1.5 bg-primary/50 rounded-full border border-slate-700/30">
-                <Clock size={14} className="text-accent" />
-                <span className="text-sm font-mono font-bold text-txt-board min-w-[45px] text-center">
+            <div className="flex items-center gap-2 px-6 py-2 bg-primary/50 rounded-full border border-slate-700/30">
+                <Clock size={16} className="text-accent" />
+                <span className="text-xl font-mono font-bold text-txt-board min-w-[60px] text-center tracking-wider">
                     {formatTime(timer)}
                 </span>
             </div>
 
             {/* Right: Theme & Settings */}
-            <div className="flex items-center gap-2">
-                <div className="flex bg-primary/30 p-1 rounded-full border border-slate-700/30">
+            <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end gap-0.5">
+                    <span className="text-[10px] uppercase tracking-tighter text-txt-secondary opacity-50 font-bold">Theme</span>
+                    <span className="text-xs capitalize text-accent font-medium leading-none">{theme}</span>
+                </div>
+                <div className="flex bg-primary/30 p-1.5 rounded-full border border-slate-700/30 gap-1.5">
                     {(['midnight', 'forest', 'retro'] as const).map((t) => (
                         <button
                             key={t}
                             onClick={() => setTheme(t)}
                             className={clsx(
-                                "w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center",
-                                theme === t ? "bg-accent scale-110 shadow-lg" : "hover:scale-105 opacity-50 hover:opacity-100"
+                                "w-6 h-6 rounded-full transition-all duration-300 flex items-center justify-center border",
+                                theme === t ? "border-accent scale-110 shadow-lg" : "border-transparent opacity-50 hover:opacity-100"
                             )}
                             title={t.charAt(0).toUpperCase() + t.slice(1)}
                         >
                             <div className={clsx(
                                 "w-3 h-3 rounded-full",
-                                t === 'midnight' ? "bg-blue-900" : t === 'forest' ? "bg-emerald-900" : "bg-orange-200"
+                                t === 'midnight' ? "bg-blue-600" : t === 'forest' ? "bg-emerald-600" : "bg-orange-400"
                             )} />
                         </button>
                     ))}
