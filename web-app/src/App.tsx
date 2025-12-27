@@ -2,6 +2,7 @@ import { Layout } from './components/layout/Layout';
 import { Board } from './components/board/Board';
 import { Controls } from './components/game/Controls';
 import { WinnerModal } from './components/game/WinnerModal';
+import { StatusBar } from './components/layout/StatusBar';
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
           <h1 className="text-4xl font-light tracking-[0.2em] text-txt-primary uppercase drop-shadow-md">Sudoku</h1>
           <p className="text-txt-secondary text-sm tracking-widest">ZEN MODE</p>
         </header>
+
+        <StatusBar />
 
         <main className="flex flex-col items-center gap-6 w-full">
           <Controls />
