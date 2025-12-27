@@ -13,6 +13,7 @@ export const Cell: React.FC<CellProps> = ({ data }) => {
     const selectCell = useGameStore(state => state.selectCell);
     const validateMode = useGameStore(state => state.validateMode);
     const highlightedDigit = useGameStore(state => state.highlightedDigit);
+    const status = useGameStore(state => state.status);
 
     const isSelected = selectedCell?.row === row && selectedCell?.col === col;
 
@@ -43,7 +44,9 @@ export const Cell: React.FC<CellProps> = ({ data }) => {
             )}
             onClick={() => selectCell(row, col)}
         >
-            {value ? (
+            {status === 'paused' ? (
+                <div className="w-full h-full bg-txt-secondary/5" />
+            ) : value ? (
                 <span className={clsx(
                     initial ? "font-bold text-txt-primary scale-100" : "font-medium text-txt-board scale-100",
                     isHighlightedValue && "text-txt-primary scale-110 font-bold drop-shadow-md"

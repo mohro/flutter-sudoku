@@ -3,11 +3,13 @@ import { Board } from './components/board/Board';
 import { Controls } from './components/game/Controls';
 import { WinnerModal } from './components/game/WinnerModal';
 import { StatusBar } from './components/layout/StatusBar';
+import { HelpPanel } from './components/layout/HelpPanel';
 
 function App() {
   return (
     <Layout>
       <WinnerModal />
+      <HelpPanel />
       <div className="flex flex-col gap-6 items-center w-full">
         <header className="text-center space-y-2">
           <h1 className="text-4xl font-light tracking-[0.2em] text-txt-primary uppercase drop-shadow-md">Sudoku</h1>

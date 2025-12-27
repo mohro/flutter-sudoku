@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { Pencil, RotateCcw, CheckCircle2, Clock } from 'lucide-react';
+import { Pencil, RotateCcw, CheckCircle2, Clock, Play, Pause, HelpCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export const StatusBar: React.FC = () => {
@@ -12,6 +12,9 @@ export const StatusBar: React.FC = () => {
     const toggleValidation = useGameStore(state => state.toggleValidation);
     const theme = useGameStore(state => state.theme);
     const history = useGameStore(state => state.history);
+    const status = useGameStore(state => state.status);
+    const togglePause = useGameStore(state => state.togglePause);
+    const toggleHelp = useGameStore(state => state.toggleHelp);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -71,21 +74,37 @@ export const StatusBar: React.FC = () => {
                 </button>
             </div>
 
-            {/* Middle/Center: Timer */}
-            <div className="flex items-center gap-2 px-6 py-2 bg-primary/50 rounded-full border border-slate-700/30">
-                <Clock size={16} className="text-accent" />
-                <span className="text-xl font-mono font-bold text-txt-board min-w-[60px] text-center tracking-wider">
-                    {formatTime(timer)}
-                </span>
+            {/* Middle/Center: Timer & Pause */}
+            <div className="flex items-center gap-3 px-4 py-2 bg-primary/50 rounded-full border border-slate-700/30">
+                <button
+                    onClick={togglePause}
+                    className="p-1 hover:bg-secondary/50 rounded-full text-accent transition-colors"
+                    title={status === 'paused' ? 'Resume' : 'Pause'}
+                >
+                    {status === 'paused' ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
+                </button>
+                <div className="flex items-center gap-2">
+                    <Clock size={16} className="text-txt-secondary opacity-50" />
+                    <span className="text-xl font-mono font-bold text-txt-board min-w-[60px] text-center tracking-wider">
+                        {formatTime(timer)}
+                    </span>
+                </div>
             </div>
 
-            {/* Right: Theme Indicator */}
+            {/* Right: Theme & Help */}
             <div className="flex items-center gap-3">
                 <div className="px-4 py-2 bg-primary/30 rounded-full border border-slate-700/30">
                     <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-txt-secondary">
                         Theme: <span className="text-accent">{theme}</span>
                     </span>
                 </div>
+                <button
+                    onClick={toggleHelp}
+                    className="p-2 text-txt-secondary hover:text-accent hover:bg-secondary/50 rounded-full transition-all"
+                    title="Help & Shortcuts"
+                >
+                    <HelpCircle size={20} />
+                </button>
             </div>
         </div>
     );

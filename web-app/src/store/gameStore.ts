@@ -20,6 +20,9 @@ interface GameStore extends BoardState {
     highlightedDigit: number | null;
     theme: 'midnight' | 'forest' | 'retro' | 'sand' | 'arctic' | 'neon';
     setTheme: (theme: 'midnight' | 'forest' | 'retro' | 'sand' | 'arctic' | 'neon') => void;
+    isHelpOpen: boolean;
+    toggleHelp: () => void;
+    togglePause: () => void;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -43,6 +46,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     validateMode: false, // Default off
     showGuides: false,
     highlightedDigit: null,
+    isHelpOpen: false,
 
     startGame: (difficulty) => {
         let { puzzle, solution } = getSudoku(difficulty);
@@ -201,4 +205,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     theme: 'midnight',
     setTheme: (theme) => set({ theme }),
+
+    toggleHelp: () => set(state => ({ isHelpOpen: !state.isHelpOpen })),
+
+    togglePause: () => set(state => {
+        if (state.status === 'won') return {};
+        return { status: state.status === 'paused' ? 'playing' : 'paused' };
+    }),
 }));

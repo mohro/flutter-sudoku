@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { Cell } from './Cell';
 import { clsx } from 'clsx';
+import { Play, Pause } from 'lucide-react';
 
 export const Board: React.FC = () => {
     const cells = useGameStore(state => state.cells);
@@ -18,6 +19,9 @@ export const Board: React.FC = () => {
     const setHighlightedDigit = useGameStore(state => state.setHighlightedDigit);
     const theme = useGameStore(state => state.theme);
     const setTheme = useGameStore(state => state.setTheme);
+    const status = useGameStore(state => state.status);
+    const togglePause = useGameStore(state => state.togglePause);
+    const toggleHelp = useGameStore(state => state.toggleHelp);
 
     const initialized = useRef(false);
 
@@ -42,9 +46,12 @@ export const Board: React.FC = () => {
         const handleKeyDown = (e: KeyboardEvent) => {
             // Global Cancel
             if (e.key === 'Escape') {
-                setCmdMode('none');
-                setCmdBuffer('');
-                setHighlightedDigit(null); // Clear highlight on Escape
+                if (cmdMode !== 'none') {
+                    setCmdMode('none');
+                    setCmdBuffer('');
+                    return;
+                }
+                togglePause();
                 return;
             }
 
@@ -128,7 +135,16 @@ export const Board: React.FC = () => {
 
                 // Actions
                 case 'u':
-                    undo();
+                case 'z':
+                    if (e.key === 'z' && !e.ctrlKey && !e.metaKey) {
+                        // Just regular 'z', though most expect Ctrl+Z
+                        undo();
+                    } else if (e.key === 'u') {
+                        undo();
+                    } else {
+                        // Ctrl/Meta + Z
+                        undo();
+                    }
                     break;
                 case 'n':
                     toggleNoteMode();
@@ -144,6 +160,14 @@ export const Board: React.FC = () => {
                     const themes = ['midnight', 'forest', 'retro', 'sand', 'arctic', 'neon'] as const;
                     const nextTheme = themes[(themes.indexOf(theme) + 1) % themes.length];
                     setTheme(nextTheme);
+                    break;
+
+                case 'p':
+                case 'P':
+                    togglePause();
+                    break;
+                case '?':
+                    toggleHelp();
                     break;
 
                 case 'Backspace':
@@ -169,7 +193,7 @@ export const Board: React.FC = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit, theme, setTheme]);
+    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit, theme, setTheme, status, togglePause, toggleHelp]);
 
     console.log("Rendering Board, cells:", cells);
 
@@ -214,12 +238,33 @@ export const Board: React.FC = () => {
 
                     {/* The Board */}
                     <div className="aspect-square w-full h-full">
-                        <div className="grid grid-cols-9 grid-rows-9 w-full h-full border-2 border-cell-border rounded-lg overflow-hidden bg-board shadow-xl">
+                        <div className="grid grid-cols-9 grid-rows-9 w-full h-full border-2 border-cell-border rounded-lg overflow-hidden bg-board shadow-xl relative">
                             {cells.map((row, rIndex) => (
                                 row.map((cell, cIndex) => (
                                     <Cell key={`${rIndex}-${cIndex}`} data={cell} />
                                 ))
                             ))}
+
+                            {/* Pause Overlay */}
+                            {status === 'paused' && (
+                                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-primary/40 backdrop-blur-xl animate-in fade-in duration-300">
+                                    <div className="bg-secondary/80 p-6 rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col items-center gap-4 scale-110">
+                                        <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-lg shadow-accent/20 animate-pulse">
+                                            <Pause size={32} className="text-white fill-current" />
+                                        </div>
+                                        <div className="text-center">
+                                            <h3 className="text-2xl font-bold text-txt-primary tracking-tight">Game Paused</h3>
+                                            <p className="text-sm text-txt-secondary font-medium">Take a breath...</p>
+                                        </div>
+                                        <button
+                                            onClick={togglePause}
+                                            className="mt-2 px-8 py-2 bg-accent hover:bg-accent-hover text-white rounded-xl font-bold transition-all shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 flex items-center gap-2"
+                                        >
+                                            <Play size={16} fill="currentColor" /> Resume
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
