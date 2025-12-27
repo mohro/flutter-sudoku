@@ -21,6 +21,7 @@ export const Board: React.FC = () => {
     const setTheme = useGameStore(state => state.setTheme);
     const status = useGameStore(state => state.status);
     const togglePause = useGameStore(state => state.togglePause);
+    const isHelpOpen = useGameStore(state => state.isHelpOpen);
     const toggleHelp = useGameStore(state => state.toggleHelp);
 
     const initialized = useRef(false);
@@ -49,6 +50,10 @@ export const Board: React.FC = () => {
                 if (cmdMode !== 'none') {
                     setCmdMode('none');
                     setCmdBuffer('');
+                    return;
+                }
+                if (isHelpOpen) {
+                    toggleHelp();
                     return;
                 }
                 togglePause();
@@ -193,7 +198,7 @@ export const Board: React.FC = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit, theme, setTheme, status, togglePause, toggleHelp]);
+    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit, theme, setTheme, status, togglePause, toggleHelp, isHelpOpen]);
 
     console.log("Rendering Board, cells:", cells);
 
