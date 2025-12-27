@@ -15,6 +15,8 @@ export const Board: React.FC = () => {
     // const difficulty = useGameStore(state => state.difficulty); // For quick restart if needed
     const selectCell = useGameStore(state => state.selectCell);
     const setHighlightedDigit = useGameStore(state => state.setHighlightedDigit);
+    const theme = useGameStore(state => state.theme);
+    const setTheme = useGameStore(state => state.setTheme);
 
     const initialized = useRef(false);
 
@@ -136,6 +138,12 @@ export const Board: React.FC = () => {
                 case 'G': // Shift+g
                     toggleGuides();
                     break;
+                case 't':
+                case 'T':
+                    const themes = ['midnight', 'forest', 'retro'] as const;
+                    const nextTheme = themes[(themes.indexOf(theme) + 1) % themes.length];
+                    setTheme(nextTheme);
+                    break;
 
                 case 'Backspace':
                 case 'Delete':
@@ -160,7 +168,7 @@ export const Board: React.FC = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit]);
+    }, [moveSelection, setCellValue, cmdMode, cmdBuffer, selectCell, undo, toggleNoteMode, toggleValidation, toggleGuides, setHighlightedDigit, theme, setTheme]);
 
     console.log("Rendering Board, cells:", cells);
 
@@ -190,23 +198,9 @@ export const Board: React.FC = () => {
                 <div className="inline-grid bg-secondary/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-cell-border"
                     style={{
                         gridTemplateColumns: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
-                        gridTemplateRows: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
+                        gridTemplateRows: showGuides ? 'minmax(300px, 600px) 32px' : 'minmax(300px, 600px)',
                         gap: '4px'
                     }}>
-
-                    {/* Corner */}
-                    {showGuides && <div className="text-txt-secondary font-mono text-xs flex items-end justify-end p-2 select-none">#</div>}
-
-                    {/* Top Guide */}
-                    {showGuides && (
-                        <div className="grid grid-cols-9 w-full h-full select-none">
-                            {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex items-end justify-center text-sm text-txt-secondary font-mono font-bold pb-1">
-                                    {i + 1}
-                                </div>
-                            ))}
-                        </div>
-                    )}
 
                     {/* Left Guide */}
                     {showGuides && (
@@ -229,6 +223,20 @@ export const Board: React.FC = () => {
                             ))}
                         </div>
                     </div>
+
+                    {/* Corner */}
+                    {showGuides && <div className="text-txt-secondary font-mono text-xs flex items-start justify-end p-2 select-none opacity-50">#</div>}
+
+                    {/* Bottom Guide */}
+                    {showGuides && (
+                        <div className="grid grid-cols-9 w-full h-full select-none">
+                            {Array.from({ length: 9 }).map((_, i) => (
+                                <div key={i} className="flex items-start justify-center text-sm text-txt-secondary font-mono font-bold pt-1">
+                                    {i + 1}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

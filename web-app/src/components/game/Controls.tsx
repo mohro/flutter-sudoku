@@ -118,19 +118,22 @@ const ThemeSelector = () => {
     const setTheme = useGameStore(state => state.setTheme);
 
     return (
-        <div className="flex justify-center gap-2 text-xs text-txt-secondary">
-            {['midnight', 'forest', 'retro'].map((t) => (
-                <button
-                    key={t}
-                    onClick={() => setTheme(t as any)}
-                    className={clsx(
-                        "px-2 py-1 rounded capitalize transition-colors",
-                        theme === t ? "text-accent font-bold" : "hover:text-txt-primary"
-                    )}
-                >
-                    {t}
-                </button>
-            ))}
+        <div className="flex flex-col items-center gap-1">
+            <div className="flex justify-center gap-2 text-xs text-txt-secondary">
+                {['midnight', 'forest', 'retro'].map((t) => (
+                    <button
+                        key={t}
+                        onClick={() => setTheme(t as any)}
+                        className={clsx(
+                            "px-2 py-1 rounded capitalize transition-colors",
+                            theme === t ? "text-accent font-bold" : "hover:text-txt-primary"
+                        )}
+                    >
+                        {t}
+                    </button>
+                ))}
+            </div>
+            <span className="text-[10px] text-txt-secondary opacity-40 lowercase">Press 'T' to cycle themes</span>
         </div>
     )
 }
