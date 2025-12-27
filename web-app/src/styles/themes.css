@@ -69,7 +69,7 @@
     --highlight-bg: rgba(249, 115, 22, 0.4);
 }
 
-/* Sunset Theme */
+/* Sunset Theme (Retro) */
 .theme-retro {
     --bg-primary: #2e1025;
     /* deep fuchsia/purple */
@@ -95,4 +95,86 @@
     --highlight-digit: #06b6d4;
     /* cyan-500 (complementary) */
     --highlight-bg: rgba(6, 182, 212, 0.4);
+}
+
+/* Sand Theme */
+.theme-sand {
+    --bg-primary: #fef3c7;
+    /* amber-100 */
+    --bg-secondary: #fde68a;
+    /* amber-200 */
+    --bg-board: #fffbeb;
+    /* amber-50 */
+
+    --text-primary: #78350f;
+    /* amber-900 */
+    --text-secondary: #92400e;
+    /* amber-800 */
+    --text-board: #b45309;
+    /* amber-700 */
+
+    --accent-color: #d97706;
+    /* amber-600 */
+    --accent-hover: #b45309;
+    /* amber-700 */
+
+    --cell-border: rgba(180, 83, 9, 0.3);
+    --cell-selected: rgba(217, 119, 6, 0.4);
+    --cell-related: rgba(217, 119, 6, 0.1);
+
+    --highlight-digit: #3b82f6;
+    /* blue-500 */
+    --highlight-bg: rgba(59, 130, 246, 0.2);
+}
+
+/* Arctic Theme */
+.theme-arctic {
+    --bg-primary: #f0f9ff;
+    /* sky-50 */
+    --bg-secondary: #e0f2fe;
+    /* sky-100 */
+    --bg-board: #ffffff;
+
+    --text-primary: #0c4a6e;
+    /* sky-900 */
+    --text-secondary: #075985;
+    /* sky-800 */
+    --text-board: #0369a1;
+    /* sky-700 */
+
+    --accent-color: #0ea5e9;
+    /* sky-500 */
+    --accent-hover: #0284c7;
+    /* sky-600 */
+
+    --cell-border: rgba(3, 105, 161, 0.2);
+    --cell-selected: rgba(14, 165, 233, 0.3);
+    --cell-related: rgba(14, 165, 233, 0.08);
+
+    --highlight-digit: #f59e0b;
+    /* amber-500 */
+    --highlight-bg: rgba(245, 158, 11, 0.2);
+}
+
+/* Neon Theme */
+.theme-neon {
+    --bg-primary: #000000;
+    --bg-secondary: #111111;
+    --bg-board: #050505;
+
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --text-board: #00ff41;
+    /* classic matrix green */
+
+    --accent-color: #00ff41;
+    --accent-hover: #00dd35;
+
+    --cell-border: rgba(0, 255, 65, 0.3);
+    --cell-selected: rgba(0, 255, 65, 0.4);
+    --cell-related: rgba(0, 255, 65, 0.1);
+
+    --highlight-digit: #ff00ff;
+    /* Fuchsia */
+    --highlight-bg: rgba(255, 0, 255, 0.3);
 }

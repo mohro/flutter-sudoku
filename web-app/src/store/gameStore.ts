@@ -51,16 +51,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     startGame: (difficulty) => {
         let { puzzle, solution } = getSudoku(difficulty);
 
-        // DEBUG: Make it almost solved
-        if (true) {
-            const solArr = solution.split('');
-            // Hide 3 random cells
-            for (let i = 0; i < 3; i++) {
-                const idx = Math.floor(Math.random() * 81);
-                solArr[idx] = '-';
-            }
-            puzzle = solArr.join('');
-        }
 
         const newCells: CellData[][] = [];
 
@@ -100,18 +90,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
         set({ selectedCell: { row: newRow, col: newCol } });
     },
 
-    setCellValue: (value, modeOverride) => {
-        const { selectedCell, cells, status, history, isNoteMode } = get();
-        if (!selectedCell || status !== 'playing') return;
+    setCellValue: (value, modeOverride) => set(state => {
+        const { selectedCell, cells, status, history, isNoteMode, validateMode, solution } = state;
+        if (!selectedCell || status !== 'playing') return {};
 
         const { row, col } = selectedCell;
         const cell = cells[row][col];
 
-        if (cell.initial) return; // Cannot edit initial cells
+        if (cell.initial) return {};
 
         // 1. Capture History (Deep Copy)
         const newHistory = [...history, cells.map(r => r.map(c => ({ ...c })))];
-        if (newHistory.length > 50) newHistory.shift(); // Limit history
+        if (newHistory.length > 50) newHistory.shift();
 
         // 2. Modify State
         const newCells = cells.map(r => r.map(c => ({ ...c })));
@@ -129,10 +119,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         } else {
             // Set Value
             target.value = target.value === value ? null : value;
-            target.notes = []; // Clear notes if value set
+            target.notes = [];
 
             // Validation check
-            const { validateMode, solution } = get();
             if (validateMode && solution && target.value !== null) {
                 const solVal = parseInt(solution[row * 9 + col]);
                 target.isValid = target.value === solVal;
@@ -144,19 +133,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
         // 3. Check Win Condition
         const isFull = newCells.every(r => r.every(c => c.value !== null));
 
-        if (isFull) {
-            // Compare with solution
+        if (isFull && solution) {
             const currentString = newCells.map(r => r.map(c => c.value).join('')).join('');
-            const { solution } = get();
-
             if (currentString === solution) {
-                set({ cells: newCells, history: newHistory, status: 'won' });
-                return;
+                return { cells: newCells, history: newHistory, status: 'won' };
             }
         }
 
-        set({ cells: newCells, history: newHistory });
-    },
+        return { cells: newCells, history: newHistory };
+    }),
 
     undo: () => {
         const { history } = get();

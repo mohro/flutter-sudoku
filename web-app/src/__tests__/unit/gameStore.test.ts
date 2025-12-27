@@ -11,8 +11,20 @@ vi.mock('sudoku-gen', () => ({
 
 describe('gameStore', () => {
     beforeEach(() => {
-        // Reset store state before each test if possible
-        // Zustand stores usually need a manual reset or a fresh instance
+        useGameStore.setState({
+            cells: [],
+            difficulty: 'easy',
+            status: 'playing',
+            timer: 0,
+            selectedCell: null,
+            history: [],
+            solution: null,
+            isNoteMode: false,
+            validateMode: false,
+            showGuides: false,
+            highlightedDigit: null,
+            isHelpOpen: false,
+        });
     });
 
     it('initializes with default values', () => {
