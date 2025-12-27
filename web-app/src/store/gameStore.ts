@@ -194,7 +194,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         }
     }),
 
-    showGuides: false,
+    // showGuides: false,
     toggleGuides: () => set(state => ({ showGuides: !state.showGuides })),
 
     setHighlightedDigit: (digit) => set({ highlightedDigit: digit }),

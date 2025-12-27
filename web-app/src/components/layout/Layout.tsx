@@ -15,8 +15,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     }, [theme]);
 
     return (
-        <div className="min-h-screen bg-primary text-txt-primary flex items-center justify-center p-4 font-sans transition-colors duration-500">
-            <div className="w-full max-w-4xl relative z-10">
+        <div className="w-full min-h-screen bg-primary text-txt-primary flex items-center justify-center p-4 font-sans transition-colors duration-500 overflow-x-hidden">
+            <div className="w-full max-w-4xl relative z-10 flex flex-col items-center">
                 {children}
             </div>
             {/* Background ambient glow */}

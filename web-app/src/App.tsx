@@ -7,7 +7,7 @@ function App() {
   return (
     <Layout>
       <WinnerModal />
-      <div className="flex flex-col gap-6 items-center">
+      <div className="flex flex-col gap-6 items-center w-full">
         <header className="text-center space-y-2">
           <h1 className="text-4xl font-light tracking-[0.2em] text-txt-primary uppercase drop-shadow-md">Sudoku</h1>
           <p className="text-txt-secondary text-sm tracking-widest">ZEN MODE</p>
