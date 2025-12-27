@@ -187,7 +187,7 @@ export const Board: React.FC = () => {
             )}
 
             <div className="flex justify-center w-full px-2">
-                <div className="inline-grid bg-slate-800/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-slate-700/50"
+                <div className="inline-grid bg-secondary/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-cell-border"
                     style={{
                         gridTemplateColumns: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
                         gridTemplateRows: showGuides ? '32px minmax(300px, 600px)' : 'minmax(300px, 600px)',
@@ -195,13 +195,13 @@ export const Board: React.FC = () => {
                     }}>
 
                     {/* Corner */}
-                    {showGuides && <div className="text-slate-600 font-mono text-xs flex items-end justify-end p-2 select-none">#</div>}
+                    {showGuides && <div className="text-txt-secondary font-mono text-xs flex items-end justify-end p-2 select-none">#</div>}
 
                     {/* Top Guide */}
                     {showGuides && (
                         <div className="grid grid-cols-9 w-full h-full select-none">
                             {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex items-end justify-center text-sm text-slate-500 font-mono font-bold pb-1">
+                                <div key={i} className="flex items-end justify-center text-sm text-txt-secondary font-mono font-bold pb-1">
                                     {i + 1}
                                 </div>
                             ))}
@@ -212,7 +212,7 @@ export const Board: React.FC = () => {
                     {showGuides && (
                         <div className="grid grid-rows-9 h-full w-full select-none">
                             {Array.from({ length: 9 }).map((_, i) => (
-                                <div key={i} className="flex items-center justify-end text-sm text-slate-500 font-mono font-bold pr-2">
+                                <div key={i} className="flex items-center justify-end text-sm text-txt-secondary font-mono font-bold pr-2">
                                     {i + 1}
                                 </div>
                             ))}
@@ -221,7 +221,7 @@ export const Board: React.FC = () => {
 
                     {/* The Board */}
                     <div className="aspect-square w-full h-full">
-                        <div className="grid grid-cols-9 grid-rows-9 w-full h-full border-2 border-slate-500/50 rounded-lg overflow-hidden bg-slate-900 shadow-xl">
+                        <div className="grid grid-cols-9 grid-rows-9 w-full h-full border-2 border-cell-border rounded-lg overflow-hidden bg-board shadow-xl">
                             {cells.map((row, rIndex) => (
                                 row.map((cell, cIndex) => (
                                     <Cell key={`${rIndex}-${cIndex}`} data={cell} />

@@ -36,12 +36,12 @@ export const Controls: React.FC = () => {
     return (
         <div className="w-full max-w-md flex flex-col gap-4">
             {/* Top Bar: Difficulty & New Game */}
-            <div className="flex justify-between items-center bg-slate-800/50 p-2 rounded-lg border border-slate-700">
+            <div className="flex justify-between items-center bg-secondary/50 p-2 rounded-lg border border-slate-700">
                 <div className="flex gap-2">
                     <select
                         value={difficulty}
                         onChange={(e) => startGame(e.target.value as Difficulty)}
-                        className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm text-slate-200 outline-none focus:border-blue-500"
+                        className="bg-primary border border-slate-600 rounded px-2 py-1 text-sm text-txt-primary outline-none focus:border-accent"
                     >
                         {difficulties.map(d => (
                             <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
@@ -51,7 +51,7 @@ export const Controls: React.FC = () => {
 
                 <button
                     onClick={() => startGame(difficulty)}
-                    className="flex items-center gap-1 px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 bg-accent hover:bg-accent-hover text-white rounded text-sm transition-colors"
                 >
                     <Play size={14} /> New Game
                 </button>
@@ -62,7 +62,7 @@ export const Controls: React.FC = () => {
                 <button
                     onClick={undo}
                     disabled={history.length === 0}
-                    className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-slate-300"
+                    className="flex flex-col items-center justify-center p-3 rounded-lg bg-secondary hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-txt-secondary"
                 >
                     <RotateCcw size={20} />
                     <span className="text-xs mt-1">Undo</span>
@@ -73,8 +73,8 @@ export const Controls: React.FC = () => {
                     className={clsx(
                         "flex flex-col items-center justify-center p-3 rounded-lg transition-colors border",
                         isNoteMode
-                            ? "bg-slate-800 border-blue-500 text-blue-400"
-                            : "bg-slate-800 border-transparent hover:bg-slate-700 text-slate-300"
+                            ? "bg-secondary border-accent text-accent"
+                            : "bg-secondary border-transparent hover:bg-secondary/80 text-txt-secondary"
                     )}
                 >
                     <Pencil size={20} />
@@ -83,7 +83,7 @@ export const Controls: React.FC = () => {
 
                 <button
                     onClick={() => setCellValue(null)} // Erase
-                    className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors text-slate-300"
+                    className="flex flex-col items-center justify-center p-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors text-txt-secondary"
                 >
                     <Eraser size={20} />
                     <span className="text-xs mt-1">Erase</span>
@@ -94,19 +94,43 @@ export const Controls: React.FC = () => {
                     className={clsx(
                         "flex flex-col items-center justify-center p-3 rounded-lg transition-colors border",
                         validateMode
-                            ? "bg-slate-800 border-green-500 text-green-400"
-                            : "bg-slate-800 border-transparent hover:bg-slate-700 text-slate-300"
+                            ? "bg-secondary border-green-500 text-green-400"
+                            : "bg-secondary border-transparent hover:bg-secondary/80 text-txt-secondary"
                     )}
                 >
                     <CheckCircle2 size={20} />
                     <span className="text-xs mt-1">Check</span>
                 </button>
 
-                <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-slate-800/40 text-slate-300 border border-slate-700/50">
-                    <span className="text-sm font-mono font-bold text-blue-300">{formatTime(timer)}</span>
+                <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-secondary/40 text-txt-secondary border border-slate-700/50">
+                    <span className="text-sm font-mono font-bold text-txt-board">{formatTime(timer)}</span>
                     <span className="text-[10px] uppercase tracking-wider opacity-60">Time</span>
                 </div>
             </div>
+
+            <ThemeSelector />
         </div>
     );
 };
+
+const ThemeSelector = () => {
+    const theme = useGameStore(state => state.theme);
+    const setTheme = useGameStore(state => state.setTheme);
+
+    return (
+        <div className="flex justify-center gap-2 text-xs text-txt-secondary">
+            {['midnight', 'forest', 'retro'].map((t) => (
+                <button
+                    key={t}
+                    onClick={() => setTheme(t as any)}
+                    className={clsx(
+                        "px-2 py-1 rounded capitalize transition-colors",
+                        theme === t ? "text-accent font-bold" : "hover:text-txt-primary"
+                    )}
+                >
+                    {t}
+                </button>
+            ))}
+        </div>
+    )
+}

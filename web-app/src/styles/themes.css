@@ -1,0 +1,98 @@
+/* Base Variables - Midnight Theme (Default) */
+:root {
+    --bg-primary: #0f172a;
+    /* slate-900 */
+    --bg-secondary: #1e293b;
+    /* slate-800 */
+    --bg-board: #0f172a;
+    /* slate-900 */
+
+    --text-primary: #f8fafc;
+    /* slate-50 */
+    --text-secondary: #94a3b8;
+    /* slate-400 */
+    --text-board: #bfdbfe;
+    /* blue-200 */
+
+    --accent-color: #3b82f6;
+    /* blue-500 */
+    --accent-hover: #2563eb;
+    /* blue-600 */
+
+    --cell-border: rgba(100, 116, 139, 0.5);
+    /* slate-500/50 */
+    --cell-selected: rgba(59, 130, 246, 0.4);
+    /* blue-500/40 */
+    --cell-related: rgba(59, 130, 246, 0.1);
+    /* blue-500/10 */
+    --cell-hover: rgba(255, 255, 255, 0.05);
+
+    --highlight-digit: #eab308;
+    /* yellow-500 */
+    --highlight-bg: rgba(234, 179, 8, 0.4);
+
+    --error-color: #ef4444;
+    /* red-500 */
+    --success-color: #22c55e;
+    /* green-500 */
+}
+
+/* Forest Theme */
+.theme-forest {
+    --bg-primary: #1c1917;
+    /* stone-900 */
+    --bg-secondary: #292524;
+    /* stone-800 */
+    --bg-board: #1c1917;
+
+    --text-primary: #f5f5f4;
+    /* stone-50 */
+    --text-secondary: #a8a29e;
+    /* stone-400 */
+    --text-board: #dcfce7;
+    /* green-100 */
+
+    --accent-color: #22c55e;
+    /* green-500 */
+    --accent-hover: #16a34a;
+    /* green-600 */
+
+    --cell-border: rgba(120, 113, 108, 0.5);
+    /* stone-500/50 */
+    --cell-selected: rgba(34, 197, 94, 0.4);
+    /* green-500/40 */
+    --cell-related: rgba(34, 197, 94, 0.1);
+    /* green-500/10 */
+
+    --highlight-digit: #f97316;
+    /* orange-500 */
+    --highlight-bg: rgba(249, 115, 22, 0.4);
+}
+
+/* Sunset Theme */
+.theme-retro {
+    --bg-primary: #2e1025;
+    /* deep fuchsia/purple */
+    --bg-secondary: #4a1d3b;
+    --bg-board: #2e1025;
+
+    --text-primary: #fdf4ff;
+    /* fuchsia-50 */
+    --text-secondary: #e879f9;
+    /* fuchsia-400 */
+    --text-board: #f0abfc;
+    /* fuchsia-300 */
+
+    --accent-color: #d946ef;
+    /* fuchsia-500 */
+    --accent-hover: #c026d3;
+    /* fuchsia-600 */
+
+    --cell-border: rgba(192, 38, 211, 0.4);
+    --cell-selected: rgba(217, 70, 239, 0.4);
+    --cell-related: rgba(217, 70, 239, 0.1);
+
+    --highlight-digit: #06b6d4;
+    /* cyan-500 (complementary) */
+    --highlight-bg: rgba(6, 182, 212, 0.4);
+}

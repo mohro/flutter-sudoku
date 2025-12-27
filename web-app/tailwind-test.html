@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind CSS Variable Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cell-selected': 'var(--cell-selected)',
+                        'accent': 'var(--accent-color)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --cell-selected: rgba(59, 130, 246, 0.4);
+            --accent-color: #3b82f6;
+        }
+
+        :root.theme-retro {
+            --cell-selected: rgba(217, 70, 239, 0.4);
+            --accent-color: #d946ef;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+    <h1 class="text-2xl mb-4">Tailwind CSS Variable Test</h1>
+
+    <div class="mb-4">
+        <button onclick="document.documentElement.classList.toggle('theme-retro')"
+            class="px-4 py-2 bg-blue-500 text-white rounded">
+            Toggle Theme
+        </button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 w-64">
+        <div class="w-20 h-20 bg-cell-selected ring-2 ring-accent flex items-center justify-center">
+            Selected
+        </div>
+        <div class="w-20 h-20 border border-gray-400 flex items-center justify-center">
+            Normal
+        </div>
+        <div class="w-20 h-20 bg-cell-selected flex items-center justify-center text-xs">
+            BG Only
+        </div>
+    </div>
+
+    <p class="mt-4 text-sm">If you see a blue glow on the "Selected" cell, Tailwind CSS variables work!</p>
+</body>
+
+</html>

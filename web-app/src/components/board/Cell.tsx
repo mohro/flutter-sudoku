@@ -27,26 +27,26 @@ export const Cell: React.FC<CellProps> = ({ data }) => {
             className={clsx(
                 "w-full h-full flex items-center justify-center text-xl sm:text-2xl cursor-pointer transition-all duration-200 select-none relative",
                 // Base Borders
-                col % 3 === 2 && col !== 8 && "border-r border-slate-500/50",
-                row % 3 === 2 && row !== 8 && "border-b border-slate-500/50",
+                col % 3 === 2 && col !== 8 && "border-r border-cell-border",
+                row % 3 === 2 && row !== 8 && "border-b border-cell-border",
 
                 // Interaction States
-                isSelected && "bg-blue-500/40 shadow-inner ring-2 ring-blue-400 z-10",
-                isRelated && !isHighlightedValue && "bg-blue-500/10",
-                !isSelected && !isRelated && !isHighlightedValue && "hover:bg-white/5",
+                isSelected && "bg-cell-selected shadow-inner ring-2 ring-accent z-10",
+                isRelated && !isHighlightedValue && "bg-cell-related",
+                !isSelected && !isRelated && !isHighlightedValue && "hover:bg-cell-hover",
 
                 // Validation Error
                 !isValid && validateMode && "bg-red-500/50 text-white animate-pulse",
 
                 // Digit Highlight (Values)
-                isHighlightedValue && "bg-yellow-500/40 ring-1 ring-yellow-400/50 text-yellow-100"
+                isHighlightedValue && "bg-highlight-bg ring-1 ring-highlight-digit/50 text-txt-primary"
             )}
             onClick={() => selectCell(row, col)}
         >
             {value ? (
                 <span className={clsx(
-                    initial ? "font-bold text-white scale-100" : "font-medium text-blue-200 scale-100",
-                    isHighlightedValue && "text-white scale-110 font-bold drop-shadow-md"
+                    initial ? "font-bold text-txt-primary scale-100" : "font-medium text-txt-board scale-100",
+                    isHighlightedValue && "text-txt-primary scale-110 font-bold drop-shadow-md"
                 )}>
                     {value}
                 </span>
@@ -57,7 +57,7 @@ export const Cell: React.FC<CellProps> = ({ data }) => {
                             {notes.includes(n) && (
                                 <span className={clsx(
                                     "text-[8px] sm:text-[10px] leading-none",
-                                    highlightedDigit === n ? "text-yellow-400 font-bold scale-125 bg-yellow-900/40 rounded px-0.5" : "text-slate-400"
+                                    highlightedDigit === n ? "text-highlight-digit font-bold scale-125 bg-secondary/80 rounded px-0.5" : "text-txt-secondary"
                                 )}>
                                     {n}
                                 </span>

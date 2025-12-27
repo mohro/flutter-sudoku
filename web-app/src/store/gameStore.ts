@@ -18,6 +18,8 @@ interface GameStore extends BoardState {
     showGuides: boolean;
     setHighlightedDigit: (digit: number | null) => void;
     highlightedDigit: number | null;
+    theme: 'midnight' | 'forest' | 'retro';
+    setTheme: (theme: 'midnight' | 'forest' | 'retro') => void;
 }
 
 const createCell = (row: number, col: number, value: number | null, initial: boolean): CellData => ({
@@ -195,6 +197,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     showGuides: false,
     toggleGuides: () => set(state => ({ showGuides: !state.showGuides })),
 
-    highlightedDigit: null,
-    setHighlightedDigit: (digit) => set({ highlightedDigit: digit })
+    setHighlightedDigit: (digit) => set({ highlightedDigit: digit }),
+
+    theme: 'midnight',
+    setTheme: (theme) => set({ theme }),
 }));
