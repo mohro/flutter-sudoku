@@ -97,8 +97,8 @@ export const Board: React.FC = () => {
                     // 4 5 6
                     // 7 8 9
                     const boxIdx = num - 1;
-                    const r = Math.floor(boxIdx / 3) * 3;
-                    const c = (boxIdx % 3) * 3;
+                    const r = Math.floor(boxIdx / 3) * 3 + 1;
+                    const c = (boxIdx % 3) * 3 + 1;
                     selectCell(r, c);
                     setCmdMode('none');
                     setCmdBuffer('');
