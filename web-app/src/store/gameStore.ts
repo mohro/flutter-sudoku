@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { getSudoku } from 'sudoku-gen';
 import type { BoardState, Difficulty, CellData } from '../types/sudoku';
 
@@ -34,167 +35,189 @@ const createCell = (row: number, col: number, value: number | null, initial: boo
     isValid: true,
 });
 
-export const useGameStore = create<GameStore>((set, get) => ({
-    cells: [],
-    difficulty: 'easy',
-    status: 'playing',
-    timer: 0,
-    selectedCell: null,
-    history: [],
-    solution: null,
-    isNoteMode: false,
-    validateMode: false, // Default off
-    showGuides: false,
-    highlightedDigit: null,
-    isHelpOpen: false,
-
-    startGame: (difficulty) => {
-        let { puzzle, solution } = getSudoku(difficulty);
-
-
-        const newCells: CellData[][] = [];
-
-        // Parse specific string format from sudoku-gen (81 chars)
-        // puzzle: '-', '1-9'; solution: '1-9'
-        let index = 0;
-        for (let r = 0; r < 9; r++) {
-            const row: CellData[] = [];
-            for (let c = 0; c < 9; c++) {
-                const char = puzzle[index];
-                const val = char === '-' || char === '.' ? null : parseInt(char); // sudoku-gen uses '-' or '.' depending on version, usually '-'
-                row.push(createCell(r, c, val, val !== null));
-                index++;
-            }
-            newCells.push(row);
-        }
-
-        set({
-            cells: newCells,
-            difficulty,
+export const useGameStore = create<GameStore>()(
+    persist(
+        (set, get) => ({
+            cells: [],
+            difficulty: 'easy',
             status: 'playing',
             timer: 0,
-            selectedCell: { row: 0, col: 0 },
+            selectedCell: null,
             history: [],
-            solution
-        });
-    },
+            solution: null,
+            isNoteMode: false,
+            validateMode: false, // Default off
+            showGuides: false,
+            highlightedDigit: null,
+            isHelpOpen: false,
 
-    selectCell: (row, col) => set({ selectedCell: { row, col } }),
+            startGame: (difficulty) => {
+                let { puzzle, solution } = getSudoku(difficulty);
 
-    moveSelection: (dx, dy) => {
-        const { selectedCell } = get();
-        if (!selectedCell) return;
 
-        const newRow = Math.max(0, Math.min(8, selectedCell.row + dx));
-        const newCol = Math.max(0, Math.min(8, selectedCell.col + dy));
-        set({ selectedCell: { row: newRow, col: newCol } });
-    },
+                const newCells: CellData[][] = [];
 
-    setCellValue: (value, modeOverride) => set(state => {
-        const { selectedCell, cells, status, history, isNoteMode, validateMode, solution } = state;
-        if (!selectedCell || status !== 'playing') return {};
+                // Parse specific string format from sudoku-gen (81 chars)
+                // puzzle: '-', '1-9'; solution: '1-9'
+                let index = 0;
+                for (let r = 0; r < 9; r++) {
+                    const row: CellData[] = [];
+                    for (let c = 0; c < 9; c++) {
+                        const char = puzzle[index];
+                        const val = char === '-' || char === '.' ? null : parseInt(char); // sudoku-gen uses '-' or '.' depending on version, usually '-'
+                        row.push(createCell(r, c, val, val !== null));
+                        index++;
+                    }
+                    newCells.push(row);
+                }
 
-        const { row, col } = selectedCell;
-        const cell = cells[row][col];
+                set({
+                    cells: newCells,
+                    difficulty,
+                    status: 'playing',
+                    timer: 0,
+                    selectedCell: { row: 0, col: 0 },
+                    history: [],
+                    solution
+                });
+            },
 
-        if (cell.initial) return {};
+            selectCell: (row, col) => set({ selectedCell: { row, col } }),
 
-        // 1. Capture History (Deep Copy)
-        const newHistory = [...history, cells.map(r => r.map(c => ({ ...c })))];
-        if (newHistory.length > 50) newHistory.shift();
+            moveSelection: (dx, dy) => {
+                const { selectedCell } = get();
+                if (!selectedCell) return;
 
-        // 2. Modify State
-        const newCells = cells.map(r => r.map(c => ({ ...c })));
-        const target = newCells[row][col];
+                const newRow = Math.max(0, Math.min(8, selectedCell.row + dx));
+                const newCol = Math.max(0, Math.min(8, selectedCell.col + dy));
+                set({ selectedCell: { row: newRow, col: newCol } });
+            },
 
-        const effectiveMode = modeOverride !== undefined ? modeOverride : isNoteMode;
+            setCellValue: (value, modeOverride) => set(state => {
+                const { selectedCell, cells, status, history, isNoteMode, validateMode, solution } = state;
+                if (!selectedCell || status !== 'playing') return {};
 
-        if (effectiveMode && value !== null) {
-            // Toggle note
-            if (target.notes.includes(value)) {
-                target.notes = target.notes.filter(n => n !== value);
-            } else {
-                target.notes = [...target.notes, value].sort();
-            }
-        } else {
-            // Set Value
-            target.value = target.value === value ? null : value;
-            target.notes = [];
+                const { row, col } = selectedCell;
+                const cell = cells[row][col];
 
-            // Validation check
-            if (validateMode && solution && target.value !== null) {
-                const solVal = parseInt(solution[row * 9 + col]);
-                target.isValid = target.value === solVal;
-            } else {
-                target.isValid = true;
-            }
+                if (cell.initial) return {};
+
+                // 1. Capture History (Deep Copy)
+                const newHistory = [...history, cells.map(r => r.map(c => ({ ...c })))];
+                if (newHistory.length > 50) newHistory.shift();
+
+                // 2. Modify State
+                const newCells = cells.map(r => r.map(c => ({ ...c })));
+                const target = newCells[row][col];
+
+                const effectiveMode = modeOverride !== undefined ? modeOverride : isNoteMode;
+
+                if (effectiveMode && value !== null) {
+                    // Toggle note
+                    if (target.notes.includes(value)) {
+                        target.notes = target.notes.filter(n => n !== value);
+                    } else {
+                        target.notes = [...target.notes, value].sort();
+                    }
+                } else {
+                    // Set Value
+                    target.value = target.value === value ? null : value;
+                    target.notes = [];
+
+                    // Validation check
+                    if (validateMode && solution && target.value !== null) {
+                        const solVal = parseInt(solution[row * 9 + col]);
+                        target.isValid = target.value === solVal;
+                    } else {
+                        target.isValid = true;
+                    }
+                }
+
+                // 3. Check Win Condition
+                const isFull = newCells.every(r => r.every(c => c.value !== null));
+
+                if (isFull && solution) {
+                    const currentString = newCells.map(r => r.map(c => c.value).join('')).join('');
+                    if (currentString === solution) {
+                        return { cells: newCells, history: newHistory, status: 'won' };
+                    }
+                }
+
+                return { cells: newCells, history: newHistory };
+            }),
+
+            undo: () => {
+                const { history } = get();
+                if (history.length === 0) return;
+
+                const previousCells = history[history.length - 1];
+                const newHistory = history.slice(0, -1);
+
+                set({ cells: previousCells, history: newHistory });
+            },
+
+            toggleNoteMode: () => set(state => ({ isNoteMode: !state.isNoteMode })),
+
+            tickTimer: () => set(state => {
+                if (state.status !== 'playing') return {};
+                return { timer: state.timer + 1 };
+            }),
+
+            toggleValidation: () => set(state => {
+                const newMode = !state.validateMode;
+                // Re-calculate validity for all cells when toggled on
+                if (newMode) {
+                    const { cells, solution } = state;
+                    if (!solution) return { validateMode: newMode };
+
+                    const newCells = cells.map((row, r) => row.map((cell, c) => {
+                        // Simple validation: Compare with solution
+                        // (There are other ways like checking conflicts, but solution match is easiest/most robust)
+                        const solVal = parseInt(solution[r * 9 + c]);
+                        const isValid = cell.value === null || cell.value === solVal;
+                        return { ...cell, isValid };
+                    }));
+                    return { validateMode: newMode, cells: newCells };
+                } else {
+                    // Reset validity to true (visuals off)
+                    const { cells } = state;
+                    const newCells = cells.map(r => r.map(c => ({ ...c, isValid: true })));
+                    return { validateMode: newMode, cells: newCells };
+                }
+            }),
+
+            // showGuides: false,
+            toggleGuides: () => set(state => ({ showGuides: !state.showGuides })),
+
+            setHighlightedDigit: (digit) => set({ highlightedDigit: digit }),
+
+            theme: 'midnight',
+            setTheme: (theme) => set({ theme }),
+
+            toggleHelp: () => set(state => ({ isHelpOpen: !state.isHelpOpen })),
+
+            togglePause: () => set(state => {
+                if (state.status === 'won') return {};
+                return { status: state.status === 'paused' ? 'playing' : 'paused' };
+            }),
+        }),
+        {
+            name: 'sudoku-game-storage',
+            partialize: (state) => ({
+                cells: state.cells,
+                difficulty: state.difficulty,
+                status: state.status,
+                timer: state.timer,
+                selectedCell: state.selectedCell,
+                history: state.history,
+                solution: state.solution,
+                isNoteMode: state.isNoteMode,
+                validateMode: state.validateMode,
+                showGuides: state.showGuides,
+                highlightedDigit: state.highlightedDigit,
+                theme: state.theme,
+                // We DON'T persist isHelpOpen as per implementation plan
+            }),
         }
-
-        // 3. Check Win Condition
-        const isFull = newCells.every(r => r.every(c => c.value !== null));
-
-        if (isFull && solution) {
-            const currentString = newCells.map(r => r.map(c => c.value).join('')).join('');
-            if (currentString === solution) {
-                return { cells: newCells, history: newHistory, status: 'won' };
-            }
-        }
-
-        return { cells: newCells, history: newHistory };
-    }),
-
-    undo: () => {
-        const { history } = get();
-        if (history.length === 0) return;
-
-        const previousCells = history[history.length - 1];
-        const newHistory = history.slice(0, -1);
-
-        set({ cells: previousCells, history: newHistory });
-    },
-
-    toggleNoteMode: () => set(state => ({ isNoteMode: !state.isNoteMode })),
-
-    tickTimer: () => set(state => {
-        if (state.status !== 'playing') return {};
-        return { timer: state.timer + 1 };
-    }),
-
-    toggleValidation: () => set(state => {
-        const newMode = !state.validateMode;
-        // Re-calculate validity for all cells when toggled on
-        if (newMode) {
-            const { cells, solution } = state;
-            if (!solution) return { validateMode: newMode };
-
-            const newCells = cells.map((row, r) => row.map((cell, c) => {
-                // Simple validation: Compare with solution
-                // (There are other ways like checking conflicts, but solution match is easiest/most robust)
-                const solVal = parseInt(solution[r * 9 + c]);
-                const isValid = cell.value === null || cell.value === solVal;
-                return { ...cell, isValid };
-            }));
-            return { validateMode: newMode, cells: newCells };
-        } else {
-            // Reset validity to true (visuals off)
-            const { cells } = state;
-            const newCells = cells.map(r => r.map(c => ({ ...c, isValid: true })));
-            return { validateMode: newMode, cells: newCells };
-        }
-    }),
-
-    // showGuides: false,
-    toggleGuides: () => set(state => ({ showGuides: !state.showGuides })),
-
-    setHighlightedDigit: (digit) => set({ highlightedDigit: digit }),
-
-    theme: 'midnight',
-    setTheme: (theme) => set({ theme }),
-
-    toggleHelp: () => set(state => ({ isHelpOpen: !state.isHelpOpen })),
-
-    togglePause: () => set(state => {
-        if (state.status === 'won') return {};
-        return { status: state.status === 'paused' ? 'playing' : 'paused' };
-    }),
-}));
+    )
+);

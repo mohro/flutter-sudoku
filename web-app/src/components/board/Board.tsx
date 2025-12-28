@@ -35,12 +35,15 @@ export const Board: React.FC = () => {
             console.log("Initializing Game...");
             initialized.current = true;
             try {
-                startGame('easy');
+                // Only start a new game if no cells are present (i.e., first load or storage cleared)
+                if (cells.length === 0) {
+                    startGame('easy');
+                }
             } catch (e) {
                 console.error("StartGame Failed:", e);
             }
         }
-    }, [startGame]);
+    }, [startGame, cells.length]);
 
     // Keyboard Navigation
     useEffect(() => {
