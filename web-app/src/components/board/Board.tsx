@@ -227,11 +227,23 @@ export const Board: React.FC = () => {
             <div className="flex justify-center w-full px-2">
                 <div className="inline-grid bg-secondary/40 p-4 rounded-xl shadow-2xl backdrop-blur-sm border border-cell-border"
                     style={{
-                        gridTemplateColumns: '32px minmax(300px, 600px)',
-                        gridTemplateRows: 'minmax(300px, 600px) 32px',
+                        gridTemplateColumns: '32px minmax(300px, 600px) 32px',
+                        gridTemplateRows: '32px minmax(300px, 600px) 32px',
                         gap: '4px'
                     }}>
 
+                    {/* Top Row: Empty Corner, Top Guide (Placeholder for balance), Empty Corner */}
+                    <div className="w-8 h-8" /> {/* Top Left Corner */}
+                    <div className={clsx("grid grid-cols-9 w-full h-full select-none transition-opacity duration-300 pointer-events-none", showGuides ? "opacity-30" : "opacity-0")}>
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <div key={i} className="flex items-end justify-center text-[10px] text-txt-secondary font-mono font-bold pb-1">
+                                {i + 1}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="w-8 h-8" /> {/* Top Right Corner */}
+
+                    {/* Middle Row: Left Guide, The Board, Right Guide (Placeholder) */}
                     {/* Left Guide */}
                     <div className={clsx("grid grid-rows-9 h-full w-full select-none transition-opacity duration-300", showGuides ? "opacity-100" : "opacity-0 pointer-events-none")}>
                         {Array.from({ length: 9 }).map((_, i) => (
@@ -273,7 +285,17 @@ export const Board: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Corner */}
+                    {/* Right Guide (Placeholder for balance) */}
+                    <div className={clsx("grid grid-rows-9 h-full w-full select-none transition-opacity duration-300 pointer-events-none", showGuides ? "opacity-30" : "opacity-0")}>
+                        {Array.from({ length: 9 }).map((_, i) => (
+                            <div key={i} className="flex items-center justify-start text-sm text-txt-secondary font-mono font-bold pl-2">
+                                {i + 1}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Bottom Row: Corner, Bottom Guide, Corner */}
+                    {/* Bottom Left Corner */}
                     <div className={clsx("text-txt-secondary font-mono text-xs flex items-start justify-end p-2 select-none opacity-50 transition-opacity duration-300", showGuides ? "opacity-30" : "opacity-0")}>#</div>
 
                     {/* Bottom Guide */}
@@ -284,6 +306,9 @@ export const Board: React.FC = () => {
                             </div>
                         ))}
                     </div>
+
+                    {/* Bottom Right Corner */}
+                    <div className={clsx("text-txt-secondary font-mono text-xs flex items-start justify-start p-2 select-none opacity-50 transition-opacity duration-300", showGuides ? "opacity-30" : "opacity-0")}>#</div>
                 </div>
             </div>
         </div>
