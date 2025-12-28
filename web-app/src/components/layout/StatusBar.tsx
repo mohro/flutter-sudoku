@@ -47,7 +47,7 @@ export const StatusBar: React.FC = () => {
     );
 
     return (
-        <div className="w-full max-w-2xl px-4 py-3 bg-secondary/30 backdrop-blur-md rounded-2xl border border-slate-700/50 flex flex-wrap items-center justify-between gap-4 shadow-xl mb-6">
+        <div className="w-full max-w-3xl px-4 py-3 bg-secondary/30 backdrop-blur-md rounded-2xl border border-slate-700/50 flex flex-wrap items-center justify-between gap-4 shadow-xl mb-6">
             {/* Left: Toggles & Actions */}
             <div className="flex items-center gap-2">
                 <StatusButton
